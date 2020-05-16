@@ -6,7 +6,7 @@ import sys
 import boto3
 
 base_url = 'http://127.0.0.1'
-cognito_client_id = '79hl4aakiqf13mo05celgerq9f'
+cognito_client_id = ''
 cognito = boto3.client('cognito-idp')
 
 
@@ -51,7 +51,7 @@ class BBSClient(Cmd):
                         },
                     ]
                 )
-                # TODO POST Create Bucket
+                requests.post(base_url + '/register', data = {"username": argv[0]})
             except cognito.exceptions.UsernameExistsException:
                 print("Username is already used.")
             except Exception as e:
@@ -116,5 +116,6 @@ if __name__ == "__main__":
     except:
         print("Fail to connect the server!")
         exit(1)
-
-    BBSClient().cmdloop(r.json()['message'])
+    response = r.json()
+    cognito_client_id = response['cognito_client_id']
+    BBSClient().cmdloop(response['message'])
