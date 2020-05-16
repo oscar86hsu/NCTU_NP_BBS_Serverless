@@ -106,3 +106,6 @@ Outputs:
   UserPoolClientId:
     Description: "User Pool Client Id"
     Value: !Ref UserPoolTokenClient
+  UserPoolId:
+    Description: "User Pool Id"
+    Value: !Ref UserPool
