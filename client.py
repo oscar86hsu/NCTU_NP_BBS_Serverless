@@ -102,8 +102,6 @@ class BBSClient(Cmd):
             print("Please login first.")
         else:
             print(self.username + ".")
-            self.username = None
-            self.auth_token = None
             
 
 
