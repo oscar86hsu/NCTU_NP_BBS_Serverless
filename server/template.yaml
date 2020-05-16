@@ -29,6 +29,20 @@ Resources:
       ExplicitAuthFlows:
       - USER_PASSWORD_AUTH
 
+  IdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties: 
+      AllowClassicFlow: True
+      AllowUnauthenticatedIdentities: False
+      CognitoIdentityProviders: 
+        - ClientId: !Ref UserPoolTokenClient
+          ProviderName: 
+            !Sub
+              - 'cognito-idp.us-east-2.amazonaws.com/${UserPoolId}'
+              - UserPoolId: !Ref UserPool
+      IdentityPoolName: nctu-bbs-identity-pool
+
+
   BoardsTable:
     Type: AWS::DynamoDB::Table
     Properties: 
