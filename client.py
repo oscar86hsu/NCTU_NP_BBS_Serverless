@@ -73,7 +73,7 @@ class BBSClient(Cmd):
                     ClientId=cognito_client_id,
                     AuthParameters={
                         'USERNAME': argv[0],
-                        'PASSWORD': argv[1]
+                        'PASSWORD': self.encode_password(argv[1])
                     }
                 )
                 self.auth_token = response['AuthenticationResult']
