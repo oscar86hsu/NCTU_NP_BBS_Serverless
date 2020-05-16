@@ -51,7 +51,7 @@ class BBSClient(Cmd):
                         },
                     ]
                 )
-                requests.post(base_url + '/register', data = {"username": argv[0]})
+                requests.post(base_url + '/register', data = json.dumps({"username": argv[0]}))
             except cognito.exceptions.UsernameExistsException:
                 print("Username is already used.")
             except Exception as e:
@@ -111,7 +111,6 @@ if __name__ == "__main__":
     try:
         r = requests.get(base_url + '/hello')
         if r.status_code != 200:
-            print("Fail to connect the server!")
             exit(1)
     except:
         print("Fail to connect the server!")

@@ -3,6 +3,10 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   NCTU_BBS
 
+Globals:
+  Function:
+    Timeout: 60
+
 Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
@@ -85,18 +89,53 @@ Resources:
         DomainName: bbs.oscarhsu.me
       StageName: dev
 
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
+      - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+
   GreetingFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: functions/hello_world/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         HelloWorld:
           Type: Api
           Properties:
             Path: /hello
             Method: get
+            RestApiId: !Ref NctuBBSApi
+
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/register/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Path: /register
+            Method: post
             RestApiId: !Ref NctuBBSApi
 
 Outputs:
