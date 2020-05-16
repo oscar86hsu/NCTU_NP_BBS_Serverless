@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  NCTU_BBS
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      UserPoolName: nctu-bbs-user-pool
+      UsernameAttributes:
+      - email
+      AutoVerifiedAttributes:
+      - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+          TemporaryPasswordValidityDays: 365
+
+  UserPoolTokenClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+      - USER_PASSWORD_AUTH
+
+  BoardsTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: name
+          AttributeType: S
+        - AttributeName: moderator
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: name
+          KeyType: HASH
+        - AttributeName: moderator
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: nctu-bbs-boards
+
+  PostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: N
+        - AttributeName: path
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: path
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: nctu-bbs-posts
+
+  IdTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: nextid
+          AttributeType: N
+        - AttributeName: name
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: name
+          KeyType: HASH
+        - AttributeName: nextid
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: nctu-bbs-next-id
+
+  NctuBBSApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Domain: 
+        CertificateArn: arn:aws:acm:us-west-2:440374182634:certificate/79797bbe-9fe2-44fa-bfd5-2f31f9905ba2
+        DomainName: bbs.oscarhsu.me
+      StageName: dev
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+            RestApiId: !Ref NctuBBSApi
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: "https://bbs.oscarhsu.me/hello/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
