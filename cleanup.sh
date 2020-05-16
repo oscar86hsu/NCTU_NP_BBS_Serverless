@@ -1,5 +1,5 @@
 #!/bin/bash
-COGNITO_USER_POOL_ID=" us-west-2_eAO87HoYF"
+COGNITO_USER_POOL_ID="us-west-2_QIhnvzwNW"
 aws cognito-idp list-users --user-pool-id $COGNITO_USER_POOL_ID |
 jq -r '.Users | .[] | .Username' |
 while read uname; do
