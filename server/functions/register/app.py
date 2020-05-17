@@ -26,23 +26,14 @@ def lambda_handler(event, context):
     )
 
     s3.create_bucket(
-        ACL='public-read',
-        Bucket='oscarhsu-nctu-bbs-' + username + '-post',
-        CreateBucketConfiguration={
-            'LocationConstraint': 'us-west-2'
-        }
-    )
-    s3.create_bucket(
         ACL='private',
-        Bucket='oscarhsu-nctu-bbs-' + username + '-mail',
+        Bucket='oscarhsu-nctu-bbs-' + username,
         CreateBucketConfiguration={
             'LocationConstraint': 'us-west-2'
         }
     )
+
     return {
         "statusCode": 200
     }
 
-
-if __name__ == "__main__":
-    lambda_handler({'username': 'user0'}, {})

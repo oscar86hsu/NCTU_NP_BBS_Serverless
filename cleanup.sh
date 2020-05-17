@@ -12,6 +12,14 @@ while read bucket; do
   aws s3 rb s3://$bucket --force
 done
 
+aws dynamodb scan \
+  --attributes-to-get name moderator \
+  --table-name nctu-bbs-boards --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-boards --key=keyItem
+
 # aws dynamodb list-tables | jq -r '.TableNames | .[] | select(startswith("oscarhsu-nctu-bbs"))' |
 # while read table; do
 #   echo "Deleting Table $table";

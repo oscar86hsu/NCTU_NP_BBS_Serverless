@@ -15,12 +15,7 @@ class BBSClient(Cmd):
     auth_token = None
     username = None
 
-    def encode_password(self, password):
-        hash_key = "nctu_bbs".encode()
-        encode_password = hashlib.sha256(hash_key)
-        encode_password.update(password.encode())
-        return encode_password.hexdigest()
-
+    ####################################### SETUP #######################################
     def default(self, line):
         self.stdout.write('Unknown command: %s\n' % (line,))
 
@@ -34,6 +29,7 @@ class BBSClient(Cmd):
             print("Bye")
             return True
 
+    ####################################### AUTH #######################################
     def do_register(self, arg):
         argv = arg.split(" ")
         if len(argv) != 3:
@@ -57,9 +53,6 @@ class BBSClient(Cmd):
             except Exception as e:
                 print(e)
 
-    def help_register(self):
-        print("Usage: register <username> <email> <password>")
-
     def do_login(self, arg):
         argv = arg.split(" ")
         if len(argv) != 2:
@@ -82,9 +75,6 @@ class BBSClient(Cmd):
             except Exception:
                 print("Login failed.")
 
-    def help_login(self):
-        print("Usage: login <username> <password>")
-
     def do_logout(self, arg):
         if len(arg) > 0:
             self.default('logout ' + arg)
@@ -102,6 +92,47 @@ class BBSClient(Cmd):
             print("Please login first.")
         else:
             print(self.username + ".")
+
+    def help_register(self):
+        print("Usage: register <username> <email> <password>")
+
+    def help_login(self):
+        print("Usage: login <username> <password>")
+
+    
+    ####################################### POST #######################################
+    def do_create(self, arg):
+        if self.auth_token == None:
+            print("Please login first.")
+        elif arg.startswith("-board"):
+            self.create_board(arg)
+        elif arg.startswith("-post"):
+            self.create_post(arg)
+        else:
+            self.default("create" + arg)
+
+    def create_board(self, arg):
+        argv = arg.split(" ")
+        if len(argv) != 2:
+            self.help_create("board")
+        else:
+            r = requests.post(base_url + '/create-board', data = json.dumps({"username": self.username, "boardname": argv[1]}), headers = {"Auth": self.auth_token['IdToken']})
+            print(r.text.replace('"', ''))
+
+    def create_post(self, arg):
+        argv = arg.split(" ")
+        if len(argv) != 2:
+            self.help_create("post")
+        else:
+            pass # TODO create-post
+
+
+    ####################################### MISC #######################################
+    def encode_password(self, password):
+        hash_key = "nctu_bbs".encode()
+        encode_password = hashlib.sha256(hash_key)
+        encode_password.update(password.encode())
+        return encode_password.hexdigest()
             
 
 
