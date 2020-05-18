@@ -5,7 +5,7 @@ client = boto3.client('dynamodb')
 
 
 def lambda_handler(event, context):
-    username = json.loads(event['body'])['username']
+    username = json.dumps(event['requestContext']['authorizer']['claims']['cognito:username'])
     boardname = json.loads(event['body'])['boardname']
 
     try:

@@ -120,7 +120,7 @@ class BBSClient(Cmd):
             self.help_create("board")
         else:
             r = requests.post(base_url + '/create-board', data=json.dumps(
-                {"username": self.username, "boardname": argv[1]}), headers={"Auth": self.auth_token['IdToken']})
+                {"boardname": argv[1]}), headers={"Auth": self.auth_token['IdToken']})
             print(r.json())
 
     def create_post(self, arg):
@@ -164,7 +164,7 @@ class BBSClient(Cmd):
             return
         else:
             r = requests.post(base_url + '/create-post', 
-                data=json.dumps({"username": self.username, "board": argv[1], "title": title, "content": content}),
+                data=json.dumps({"board": argv[1], "title": title, "content": content}),
                 headers={"Auth": self.auth_token['IdToken']})
             print(r.json())
 
@@ -173,6 +173,8 @@ class BBSClient(Cmd):
             self.list_board(arg)
         elif arg.startswith("-post"):
             self.list_post(arg)
+        elif arg.startswith("-mail"):
+            self.list_mail(arg)
         else:
             self.default("list" + arg)
 
@@ -202,6 +204,9 @@ class BBSClient(Cmd):
                           data=json.dumps({"board": argv[1], "key": key}))
         print(r.json())
 
+    def list_mail(self, arg):
+        pass
+
     def do_read(self, arg):
         r = requests.post(base_url + '/read',
                           data=json.dumps({"post_id": arg}))
@@ -215,6 +220,22 @@ class BBSClient(Cmd):
         print("--")
         for c in post['comment']:
             print("{} : {}".format(c['username'], c['comment']))
+
+    def do_delete(self, arg):
+        if self.auth_token == None:
+            print("Please login first.")
+        elif arg.startswith("-post"):
+            self.list_board(arg)
+        elif arg.startswith("-mail"):
+            self.list_post(arg)
+        else:
+            self.default("list" + arg)
+
+    def delete_post(self, arg):
+        pass
+
+    def delete_mail(self, arg):
+        pass
 
     def help_list(self, arg):
         if arg == "board":
@@ -238,6 +259,12 @@ class BBSClient(Cmd):
         encode_password.update(password.encode())
         return encode_password.hexdigest()
 
+    def do_test(self, arg):
+        r = requests.post(base_url + '/test', data=json.dumps("test"), headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
+
+    def do_id(self, arg):
+        print(self.auth_token['IdToken'])
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
