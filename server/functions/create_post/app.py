@@ -8,7 +8,7 @@ s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
     body = json.loads(event['body'])
-    username = json.dumps(event['requestContext']['authorizer']['claims']['cognito:username'])
+    username = event['requestContext']['authorizer']['claims']['cognito:username']
     board = body['board']
     title = body['title']
     content = body['content']
