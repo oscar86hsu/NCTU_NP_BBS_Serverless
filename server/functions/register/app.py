@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         ACL='private',
         Bucket='oscarhsu-nctu-bbs-' + username,
         CreateBucketConfiguration={
-            'LocationConstraint': 'us-west-2'
+            'LocationConstraint': 'ap-northeast-1'
         }
     )
 
