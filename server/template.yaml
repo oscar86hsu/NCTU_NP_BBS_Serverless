@@ -49,13 +49,9 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: name
           AttributeType: S
-        - AttributeName: moderator
-          AttributeType: S
       KeySchema: 
         - AttributeName: name
           KeyType: HASH
-        - AttributeName: moderator
-          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       TableName: nctu-bbs-boards
 
@@ -79,15 +75,11 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties: 
       AttributeDefinitions: 
-        - AttributeName: nextid
-          AttributeType: N
         - AttributeName: name
           AttributeType: S
       KeySchema: 
         - AttributeName: name
           KeyType: HASH
-        - AttributeName: nextid
-          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       TableName: nctu-bbs-next-id
 
@@ -172,6 +164,23 @@ Resources:
             Method: post
             RestApiId: !Ref NctuBBSApi
 
+  CreatePostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/create_post/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /create-post
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
   ListBoardFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -186,6 +195,7 @@ Resources:
             Path: /list-board
             Method: post
             RestApiId: !Ref NctuBBSApi
+
 
 Outputs:
   ApiUrl:

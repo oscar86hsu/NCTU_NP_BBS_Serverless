@@ -42,4 +42,4 @@ if __name__ == "__main__":
     event = {
         "body": '{"username": "user0", "boardname": "board0"}'
     }
-    lambda_handler(event, {})
+    print(lambda_handler(event, {}))

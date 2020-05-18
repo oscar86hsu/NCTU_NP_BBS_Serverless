@@ -47,7 +47,10 @@ class BBSClient(Cmd):
                         },
                     ]
                 )
-                requests.post(base_url + '/register', data = json.dumps({"username": argv[0]}))
+                r = requests.post(base_url + '/register',
+                              data=json.dumps({"username": argv[0]}))
+                if r.status_code == 200:
+                    print("Register successfully.")
             except cognito.exceptions.UsernameExistsException:
                 print("Username is already used.")
             except Exception as e:
@@ -99,8 +102,8 @@ class BBSClient(Cmd):
     def help_login(self):
         print("Usage: login <username> <password>")
 
-    
     ####################################### POST #######################################
+
     def do_create(self, arg):
         if self.auth_token == None:
             print("Please login first.")
@@ -116,16 +119,82 @@ class BBSClient(Cmd):
         if len(argv) != 2:
             self.help_create("board")
         else:
-            r = requests.post(base_url + '/create-board', data = json.dumps({"username": self.username, "boardname": argv[1]}), headers = {"Auth": self.auth_token['IdToken']})
-            print(r.text.replace('"', ''))
+            r = requests.post(base_url + '/create-board', data=json.dumps(
+                {"username": self.username, "boardname": argv[1]}), headers={"Auth": self.auth_token['IdToken']})
+            print(r.json())
 
     def create_post(self, arg):
         argv = arg.split(" ")
-        if len(argv) != 2:
-            self.help_create("post")
-        else:
-            pass # TODO create-post
 
+        title = ""
+        content = ""
+        tmp = ""
+
+        try:
+            title_index = argv.index("--title")
+        except ValueError:
+            self.help_create("post")
+            return
+
+        try:
+            content_index = argv.index("--content")
+        except ValueError:
+            self.help_create("post")
+            return
+
+        while title_index < (len(argv) - 1):
+            title_index += 1
+            tmp = argv[title_index]
+            if tmp == "--content":
+                break
+            title += argv[title_index] + " "
+
+        tmp = ""
+        while content_index < (len(argv) - 1):
+            content_index += 1
+            tmp = argv[content_index]
+            if tmp == "--title":
+                break
+            content += argv[content_index] + " "
+
+        title = title[:-1]
+        content = content[:-1]
+        if len(title) == 0:
+            print("Title cannot be empty!\n")
+            return
+        else:
+            r = requests.post(base_url + '/create-board', 
+                data=json.dumps({"username": self.username, "board": argv[1], "title": title, "content": content}),
+                headers={"Auth": self.auth_token['IdToken']})
+
+    def do_list(self, arg):
+        if arg.startswith("-board"):
+            self.list_board(arg)
+        elif arg.startswith("-post"):
+            self.list_post(arg)
+        else:
+            self.default("list" + arg)
+
+    def list_board(self, arg):
+        arg = arg.replace("-board", "")
+        r = requests.post(base_url + '/list-board',
+                          data=json.dumps({"key": arg[1:]}))
+        print(r.json())
+
+    def list_post(self, arg):
+        pass
+
+    def help_list(self, arg):
+        if arg == "board":
+            print("Usage: list-board ##<key>")
+        else:
+            print("Usage: list-post <board-name> ##<key>")
+
+    def help_create(self, arg):
+        if arg == "board":
+            print("Usage: create-board <name>")
+        else:
+            print("Usage: create-post <board-name> --title <title> --content <content>")
 
     ####################################### MISC #######################################
     def encode_password(self, password):
@@ -133,7 +202,6 @@ class BBSClient(Cmd):
         encode_password = hashlib.sha256(hash_key)
         encode_password.update(password.encode())
         return encode_password.hexdigest()
-            
 
 
 if __name__ == "__main__":

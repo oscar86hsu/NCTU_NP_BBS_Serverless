@@ -13,13 +13,28 @@ while read bucket; do
 done
 
 aws dynamodb scan \
-  --attributes-to-get name moderator \
+  --attributes-to-get name \
   --table-name nctu-bbs-boards --query "Items[*]" \
   | jq --compact-output '.[]' \
   | tr '\n' '\0' \
   | xargs -0 -t -I keyItem \
     aws dynamodb delete-item --table-name nctu-bbs-boards --key=keyItem
 
+aws dynamodb scan \
+  --attributes-to-get id path \
+  --table-name nctu-bbs-posts --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-posts --key=keyItem
+
+aws dynamodb scan \
+  --attributes-to-get name \
+  --table-name nctu-bbs-next-id --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-next-id --key=keyItem
 # aws dynamodb list-tables | jq -r '.TableNames | .[] | select(startswith("oscarhsu-nctu-bbs"))' |
 # while read table; do
 #   echo "Deleting Table $table";
