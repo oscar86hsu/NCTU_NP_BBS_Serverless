@@ -40,6 +40,16 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     event = {
+        'requestContext':
+        {
+            'authorizer':
+            {
+                'claims':
+                {
+                    'cognito:username': 'user0'
+                }
+            }
+        },
         "body": '{"username": "user0", "boardname": "board0"}'
     }
     print(lambda_handler(event, {}))

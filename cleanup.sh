@@ -21,7 +21,7 @@ aws dynamodb scan \
     aws dynamodb delete-item --table-name nctu-bbs-boards --key=keyItem
 
 aws dynamodb scan \
-  --attributes-to-get id path \
+  --attributes-to-get id \
   --table-name nctu-bbs-posts --query "Items[*]" \
   | jq --compact-output '.[]' \
   | tr '\n' '\0' \

@@ -48,7 +48,7 @@ class BBSClient(Cmd):
                     ]
                 )
                 r = requests.post(base_url + '/register',
-                              data=json.dumps({"username": argv[0]}))
+                                  data=json.dumps({"username": argv[0]}))
                 if r.status_code == 200:
                     print("Register successfully.")
             except cognito.exceptions.UsernameExistsException:
@@ -163,9 +163,10 @@ class BBSClient(Cmd):
             print("Title cannot be empty!\n")
             return
         else:
-            r = requests.post(base_url + '/create-post', 
-                data=json.dumps({"board": argv[1], "title": title, "content": content}),
-                headers={"Auth": self.auth_token['IdToken']})
+            r = requests.post(base_url + '/create-post',
+                              data=json.dumps(
+                                  {"board": argv[1], "title": title, "content": content}),
+                              headers={"Auth": self.auth_token['IdToken']})
             print(r.json())
 
     def do_list(self, arg):
@@ -225,14 +226,18 @@ class BBSClient(Cmd):
         if self.auth_token == None:
             print("Please login first.")
         elif arg.startswith("-post"):
-            self.list_board(arg)
+            self.delete_post(arg)
         elif arg.startswith("-mail"):
-            self.list_post(arg)
+            self.delete_mail(arg)
         else:
-            self.default("list" + arg)
+            self.default("delete" + arg)
 
     def delete_post(self, arg):
-        pass
+        r = requests.post(base_url + '/delete-post',
+                          data=json.dumps(
+                              {"post_id": arg}),
+                          headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
 
     def delete_mail(self, arg):
         pass
@@ -252,6 +257,9 @@ class BBSClient(Cmd):
     def help_read(self):
         print("Usage: read <post-id>")
 
+    def help_read(self):
+        print("Usage: delete-post <post-id>")
+
     ####################################### MISC #######################################
     def encode_password(self, password):
         hash_key = "nctu_bbs".encode()
@@ -259,12 +267,6 @@ class BBSClient(Cmd):
         encode_password.update(password.encode())
         return encode_password.hexdigest()
 
-    def do_test(self, arg):
-        r = requests.post(base_url + '/test', data=json.dumps("test"), headers={"Auth": self.auth_token['IdToken']})
-        print(r.json())
-
-    def do_id(self, arg):
-        print(self.auth_token['IdToken'])
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
