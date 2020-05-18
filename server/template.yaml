@@ -61,13 +61,9 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: N
-        - AttributeName: path
-          AttributeType: S
       KeySchema: 
-        - AttributeName: path
-          KeyType: HASH
         - AttributeName: id
-          KeyType: RANGE
+          KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       TableName: nctu-bbs-posts
 
@@ -208,6 +204,21 @@ Resources:
           Type: Api
           Properties:
             Path: /list-post
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
+  ReadPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/read/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Path: /read
             Method: post
             RestApiId: !Ref NctuBBSApi
 

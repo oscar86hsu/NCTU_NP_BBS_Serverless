@@ -202,6 +202,19 @@ class BBSClient(Cmd):
                           data=json.dumps({"board": argv[1], "key": key}))
         print(r.json())
 
+    def do_read(self, arg):
+        r = requests.post(base_url + '/read',
+                          data=json.dumps({"post_id": arg}))
+        post_path = r.json()
+        post = requests.get(post_path).json()
+        print("Author  : " + post['username'])
+        print("Title   : " + post['title'])
+        print("Date    : " + post['date'])
+        print("--")
+        print(post['content'].replace("<br>", "\n"))
+        print("--")
+        for c in post['comment']:
+            print("{} : {}".format(c['username'], c['comment']))
 
     def help_list(self, arg):
         if arg == "board":
@@ -215,7 +228,8 @@ class BBSClient(Cmd):
         else:
             print("Usage: create-post <board-name> --title <title> --content <content>")
 
-
+    def help_read(self):
+        print("Usage: read <post-id>")
 
     ####################################### MISC #######################################
     def encode_password(self, password):
