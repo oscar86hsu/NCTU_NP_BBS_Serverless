@@ -163,9 +163,10 @@ class BBSClient(Cmd):
             print("Title cannot be empty!\n")
             return
         else:
-            r = requests.post(base_url + '/create-board', 
+            r = requests.post(base_url + '/create-post', 
                 data=json.dumps({"username": self.username, "board": argv[1], "title": title, "content": content}),
                 headers={"Auth": self.auth_token['IdToken']})
+            print(r.json())
 
     def do_list(self, arg):
         if arg.startswith("-board"):
