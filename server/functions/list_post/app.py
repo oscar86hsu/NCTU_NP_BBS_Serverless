@@ -14,7 +14,7 @@ def lambda_handler(event, context):
 
     if not "Item" in item:
         return {
-            "statusCode": 400,
+            "statusCode": 404,
             "body": json.dumps("Board does not exist.")
         }
     

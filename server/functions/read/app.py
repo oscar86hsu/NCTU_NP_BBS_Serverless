@@ -23,7 +23,7 @@ def lambda_handler(event, context):
         }
     except KeyError:
         return {
-            "statusCode": 400,
+            "statusCode": 404,
             "body": json.dumps("Post does not exist.")
         }
 
