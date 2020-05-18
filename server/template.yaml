@@ -196,6 +196,21 @@ Resources:
             Method: post
             RestApiId: !Ref NctuBBSApi
 
+  ListPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/list_post/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Path: /list-post
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
 
 Outputs:
   ApiUrl:

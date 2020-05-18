@@ -177,13 +177,31 @@ class BBSClient(Cmd):
             self.default("list" + arg)
 
     def list_board(self, arg):
-        arg = arg.replace("-board", "")
+        argv = arg.split(" ")
+        if len(argv) > 2:
+            self.help_list("board")
+            return
+        if len(argv) > 1:
+            key = argv[1]
+        else:
+            key = ""
         r = requests.post(base_url + '/list-board',
-                          data=json.dumps({"key": arg[1:]}))
+                          data=json.dumps({"key": key}))
         print(r.json())
 
     def list_post(self, arg):
-        pass
+        argv = arg.split(" ")
+        if len(argv) > 3 or len(argv) < 2:
+            self.help_list("post")
+            return
+        if len(argv) > 2:
+            key = argv[2]
+        else:
+            key = ""
+        r = requests.post(base_url + '/list-post',
+                          data=json.dumps({"board": argv[1], "key": key}))
+        print(r.json())
+
 
     def help_list(self, arg):
         if arg == "board":
@@ -196,6 +214,8 @@ class BBSClient(Cmd):
             print("Usage: create-board <name>")
         else:
             print("Usage: create-post <board-name> --title <title> --content <content>")
+
+
 
     ####################################### MISC #######################################
     def encode_password(self, password):

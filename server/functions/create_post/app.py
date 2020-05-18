@@ -34,7 +34,7 @@ def lambda_handler(event, context):
     bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
     date = datetime.now().strftime("%Y-%m-%d")
     key = 'post/{}-{}'.format(title, date)
-    path = 'https://{}.s3.us-west-2.amazonaws.com/{}'.format(bucket, key)
+    path = 'https://{}.s3.ap-northeast-1.amazonaws.com/{}'.format(bucket, key)
 
     client.put_item(
         TableName='nctu-bbs-next-id',
