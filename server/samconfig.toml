@@ -3,7 +3,8 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "NCTU-BBS"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ykgqka654a2v"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-njs0w35z2480"
 s3_prefix = "NCTU-BBS"
-region = "us-west-2"
+region = "ap-northeast-1"
 capabilities = "CAPABILITY_IAM"
+

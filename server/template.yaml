@@ -87,7 +87,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       Domain: 
-        CertificateArn: arn:aws:acm:us-west-2:440374182634:certificate/79797bbe-9fe2-44fa-bfd5-2f31f9905ba2
+        CertificateArn: arn:aws:acm:ap-northeast-1:440374182634:certificate/3705c935-a0cf-4c05-a49a-19f84d98ae4b
         DomainName: bbs.oscarhsu.me
       StageName: dev
       Auth:
