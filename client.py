@@ -233,15 +233,20 @@ class BBSClient(Cmd):
             self.default("delete" + arg)
 
     def delete_post(self, arg):
+        argv = arg.split(" ")
+        if len(argv) != 2:
+            self.help_delete()
+            return
         r = requests.post(base_url + '/delete-post',
                           data=json.dumps(
-                              {"post_id": arg}),
+                              {"post_id": argv[1]}),
                           headers={"Auth": self.auth_token['IdToken']})
         print(r.json())
 
     def delete_mail(self, arg):
         pass
 
+    
     def help_list(self, arg):
         if arg == "board":
             print("Usage: list-board ##<key>")
@@ -257,8 +262,11 @@ class BBSClient(Cmd):
     def help_read(self):
         print("Usage: read <post-id>")
 
-    def help_read(self):
+    def help_delete(self):
         print("Usage: delete-post <post-id>")
+
+    def help_update(self):
+        print("Usage: update-post <post-id> --title/content <new>")
 
     ####################################### MISC #######################################
     def encode_password(self, password):
@@ -266,6 +274,9 @@ class BBSClient(Cmd):
         encode_password = hashlib.sha256(hash_key)
         encode_password.update(password.encode())
         return encode_password.hexdigest()
+
+    def do_id(self, arg):
+        print(self.auth_token['IdToken'])
 
 
 if __name__ == "__main__":
