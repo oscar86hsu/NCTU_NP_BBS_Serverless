@@ -64,6 +64,9 @@ def lambda_handler(event, context):
             },
             'date': {
                 'S': date
+            },
+            'board': {
+                'S': board
             }
         })
 

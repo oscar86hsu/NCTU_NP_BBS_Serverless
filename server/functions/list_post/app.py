@@ -21,7 +21,9 @@ def lambda_handler(event, context):
     results = "{:8}{:12}{:12}{:12}\n".format("ID", "Title", "Author", "Date")
     response = client.scan(TableName='nctu-bbs-posts')
     for item in response['Items']:
-        if (len(key) > 0) and (key not in item['board']['S']):
+        if board != item['board']['S']:
+            continue
+        if (len(key) > 0) and (key not in item['title']['S']):
             continue
         results += "{:8}{:12}{:12}{:12}\n".format(item['id']['N'], item['title']['S'], item['author']['S'], item['date']['S'])
 
@@ -32,6 +34,6 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     event = {
-        "body": '{"board": "board0", "key":""}'
+        "body": '{"board": "board0", "key":"new"}'
     }
     print(json.dumps(lambda_handler(event, {})))
