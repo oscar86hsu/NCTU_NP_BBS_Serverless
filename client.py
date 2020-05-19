@@ -213,7 +213,7 @@ class BBSClient(Cmd):
                           data=json.dumps({"post_id": arg}))
         post_path = r.json()
         post = requests.get(post_path).json()
-        print("Author  : " + post['username'])
+        print("Author  : " + post['author'])
         print("Title   : " + post['title'])
         print("Date    : " + post['date'])
         print("--")
@@ -246,7 +246,32 @@ class BBSClient(Cmd):
     def delete_mail(self, arg):
         pass
 
-    
+    def do_update(self, arg):
+        argv = arg.split(" ")
+        if argv[0] != "-post":
+            self.default("update")
+            return
+        if len(argv) < 4:
+            self.help_update()
+            return
+        if (argv[2] != "--title") and (argv[2] != "--content"):
+            self.help_update()
+            return
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+
+        content = ""
+        for i in range(3, len(argv)):
+            content += argv[i] + " "
+        r = requests.post(base_url + '/update',
+                          data=json.dumps(
+                              {"post_id": argv[1], "update": argv[2], "content": content[:-1]}),
+                          headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
+
+        
+
     def help_list(self, arg):
         if arg == "board":
             print("Usage: list-board ##<key>")

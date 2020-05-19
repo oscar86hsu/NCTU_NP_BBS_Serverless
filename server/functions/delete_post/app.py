@@ -16,7 +16,6 @@ def lambda_handler(event, context):
                 'N': post_id,
             }
         })
-    print(item)
     try:
         owner = item['Item']['author']['S']
         if owner != username:
@@ -59,6 +58,6 @@ if __name__ == "__main__":
                 }
             }
         },
-        "body": '{"post_id": "1"}'
+        "body": '{"post_id": "3"}'
     }
     print(json.dumps(lambda_handler(event, {})))

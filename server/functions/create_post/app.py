@@ -69,6 +69,7 @@ def lambda_handler(event, context):
 
     body['date'] = date
     body['comment'] = {}
+    body['author'] = username
     response = s3.put_object(
         ACL='public-read',
         Body=json.dumps(body).encode(),
@@ -93,6 +94,6 @@ if __name__ == "__main__":
                 }
             }
         },
-        "body": '{"username": "user0", "board": "board0", "title":"title", "content":"content"}'
+        "body": '{"board": "board0", "title":"title", "content":"content"}'
     }
     print(json.dumps(lambda_handler(event, {})))

@@ -239,6 +239,23 @@ Resources:
             Method: post
             RestApiId: !Ref NctuBBSApi
 
+  UpdateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/update/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /update
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
 
 Outputs:
   ApiUrl:
