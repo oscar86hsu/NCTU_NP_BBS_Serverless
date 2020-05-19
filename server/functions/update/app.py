@@ -31,18 +31,28 @@ def lambda_handler(event, context):
             "body": json.dumps("Post does not exist.")
         }
 
+    response = s3.get_object(Bucket='oscarhsu-nctu-bbs-' + owner,
+                                 Key='post/{}-{}'.format(title, date))
+    post = json.loads(response['Body'].read())
+
     if update == 'comment':
-        pass
+        post['comment'].append({'username': username, 'comment':content})
+        s3.put_object(
+            ACL='public-read',
+            Body=json.dumps(post).encode(),
+            Bucket='oscarhsu-nctu-bbs-' + owner,
+            Key='post/{}-{}'.format(title, date))
+        return {
+            "statusCode": 200,
+            "body": json.dumps("Comment successfully.")
+        }
     else:
         if owner != username:
             return {
                 "statusCode": 401,
                 "body": json.dumps("Not the post owner.")
             }
-        response = s3.get_object(Bucket='oscarhsu-nctu-bbs-' + owner,
-                                 Key='post/{}-{}'.format(title, date))
-
-        post = json.loads(response['Body'].read())
+        
         post[update[2:]] = content
         if update == '--title':
             bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
@@ -89,10 +99,10 @@ if __name__ == "__main__":
             {
                 'claims':
                 {
-                    'cognito:username': 'user0'
+                    'cognito:username': 'user1'
                 }
             }
         },
-        "body": '{"post_id": "6", "update":"--title", "content":"new title 123"}'
+        "body": '{"post_id": "6", "update":"comment", "content":"comment"}'
     }
     print(json.dumps(lambda_handler(event, {})))

@@ -270,6 +270,24 @@ class BBSClient(Cmd):
                           headers={"Auth": self.auth_token['IdToken']})
         print(r.json())
 
+    def do_comment(self, arg):
+        argv = arg.split(" ")
+        if len(argv) < 2:
+            self.help_comment()
+            return
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+        comment = ""
+        for i in range(1, len(argv)):
+            comment += argv[i] + " "
+
+        r = requests.post(base_url + '/update',
+                          data=json.dumps(
+                              {"post_id": argv[0], "update": "comment", "content": comment[:-1]}),
+                          headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
+
         
 
     def help_list(self, arg):
@@ -292,6 +310,9 @@ class BBSClient(Cmd):
 
     def help_update(self):
         print("Usage: update-post <post-id> --title/content <new>")
+
+    def help_comment(self):
+        print("Usage: comment <post-id> <comment>")
 
     ####################################### MISC #######################################
     def encode_password(self, password):

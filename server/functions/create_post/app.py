@@ -68,7 +68,7 @@ def lambda_handler(event, context):
         })
 
     body['date'] = date
-    body['comment'] = {}
+    body['comment'] = []
     body['author'] = username
     response = s3.put_object(
         ACL='public-read',
