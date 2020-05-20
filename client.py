@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from cmd import Cmd
 import hashlib
 import requests
@@ -185,7 +186,10 @@ class BBSClient(Cmd):
             self.help_list("board")
             return
         if len(argv) > 1:
-            key = argv[1]
+            if not argv[1].startswith("##"):
+                self.help_list("board")
+                return
+            key = argv[1][2:]
         else:
             key = ""
         r = requests.post(base_url + '/list-board',
@@ -198,7 +202,10 @@ class BBSClient(Cmd):
             self.help_list("post")
             return
         if len(argv) > 2:
-            key = argv[2]
+            if not argv[2].startswith("##"):
+                self.help_list("board")
+                return
+            key = argv[2][2:]
         else:
             key = ""
         r = requests.post(base_url + '/list-post',
@@ -212,6 +219,9 @@ class BBSClient(Cmd):
         r = requests.post(base_url + '/read',
                           data=json.dumps({"post_id": arg}))
         post_path = r.json()
+        if not post_path.startswith("http"):
+            print(post_path)
+            return
         post = requests.get(post_path).json()
         print("Author  : " + post['author'])
         print("Title   : " + post['title'])
