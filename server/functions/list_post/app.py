@@ -20,7 +20,8 @@ def lambda_handler(event, context):
     
     results = "{:8}{:12}{:12}{:12}\n".format("ID", "Title", "Author", "Date")
     response = client.scan(TableName='nctu-bbs-posts')
-    for item in response['Items']:
+    sorted_item = sorted(response['Items'], key=lambda k: int(k['id']['N'])) 
+    for item in sorted_item:
         if board != item['board']['S']:
             continue
         if (len(key) > 0) and (key not in item['title']['S']):
@@ -34,6 +35,6 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     event = {
-        "body": '{"board": "board0", "key":"new"}'
+        "body": '{"board": "test", "key":""}'
     }
     print(json.dumps(lambda_handler(event, {})))
