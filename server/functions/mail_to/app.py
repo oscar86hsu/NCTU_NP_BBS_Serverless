@@ -1,6 +1,6 @@
 import json
 import boto3
-from datetime import datetime
+import time
 
 s3 = boto3.client('s3')
 
@@ -12,16 +12,14 @@ def lambda_handler(event, context):
     subject = body['subject']
 
     bucket = 'oscarhsu-nctu-bbs-{}'.format(receiver)
-    date = datetime.now().strftime("%Y-%m-%d")
-    key = 'mail/{}-{}'.format(subject, date)
+    key = 'mail/{}|{}|{}'.format(subject, username, int(time.time()))
 
     response = s3.generate_presigned_url(
         ClientMethod='put_object',
         Params={
             'Bucket': bucket,
             'Key': key,
-            'ACL': 'private',
-            'ContentType': 'application/json'
+            'ACL': 'private'
         },
         ExpiresIn=60
     )
@@ -40,10 +38,10 @@ if __name__ == "__main__":
             {
                 'claims':
                 {
-                    'cognito:username': 'user0'
+                    'cognito:username': 'user1'
                 }
             }
         },
-        "body": '{"to": "user0", "subject":"subject"}'
+        "body": '{"to": "user0", "subject":"subject2"}'
     }
     print(json.loads(lambda_handler(event, {})['body']))

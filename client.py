@@ -168,7 +168,8 @@ class BBSClient(Cmd):
             return
         else:
             r = requests.post(base_url + '/create-post',
-                              data=json.dumps({"board": argv[1], "title": title}),
+                              data=json.dumps(
+                                  {"board": argv[1], "title": title}),
                               headers={"Auth": self.auth_token['IdToken']})
             if r.status_code != 200:
                 print(r.json())
@@ -184,10 +185,9 @@ class BBSClient(Cmd):
                 "comment": []
             }
             r = requests.put(presigned_url,
-                              json=post_data)
+                             json=post_data)
             if r.status_code == 200:
                 print("Create post successfully.")
-            
 
     def do_list(self, arg):
         if arg.startswith("-board"):
@@ -311,8 +311,6 @@ class BBSClient(Cmd):
                           headers={"Auth": self.auth_token['IdToken']})
         print(r.json())
 
-        
-
     def help_list(self, arg):
         if arg == "board":
             print("Usage: list-board ##<key>")
@@ -344,15 +342,17 @@ class BBSClient(Cmd):
         argv = arg.split(" ")
         if self.auth_token == None:
             print("Please login first.")
-        elif len(argv) < 3
+            return
+        elif len(argv) < 3:
             self.help_mail()
+            return
         elif argv[0] != "-to":
             self.default("mail")
+            return
 
         subject = ""
         content = ""
         tmp = ""
-        date = datetime.now().strftime("%Y-%m-%d")
 
         try:
             subject_index = argv.index("--subject")
@@ -388,28 +388,35 @@ class BBSClient(Cmd):
             return
         else:
             r = requests.post(base_url + '/mail-to',
-                              data=json.dumps({"to": argv[1], "subject": subject}),
+                              data=json.dumps(
+                                  {"to": argv[1], "subject": subject}),
                               headers={"Auth": self.auth_token['IdToken']})
             if r.status_code != 200:
                 print(r.json())
                 return
 
             presigned_url = r.json()
-            mail_data = {
-                "subject": subject,
-                "content": content,
-                "from": self.username,
-                "date": date
-            }
             r = requests.put(presigned_url,
-                              json=mail_data)
+                             data=content)
             if r.status_code == 200:
                 print("Sent successfully.")
             elif r.status_code == 404:
                 print("{} does not exist.".format(argv[1]))
-        
+            else:
+                print(r.text)
+
     def list_mail(self, arg):
-        pass
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+        r = requests.get(base_url + '/list-mail',
+                         headers={"Auth": self.auth_token['IdToken']})
+        self.mail_list = r.json()
+        i = 0
+        print("{:8}{:12}{:12}{:12}".format("ID", "Subject", "From", "Date"))
+        for mail in self.mail_list:
+            i = i + 1
+            print("{:8}{:12}{:12}{:12}".format(str(i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
 
     def delete_mail(self, arg):
         pass
@@ -417,8 +424,8 @@ class BBSClient(Cmd):
     def help_mail(self):
         print("Usage: mail-to <username> --subject <subject> --content <content>")
 
-    
     ####################################### MISC #######################################
+
     def encode_password(self, password):
         hash_key = "nctu_bbs".encode()
         encode_password = hashlib.sha256(hash_key)
