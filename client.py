@@ -115,7 +115,7 @@ class BBSClient(Cmd):
         elif arg.startswith("-post"):
             self.create_post(arg)
         else:
-            self.default("create" + arg)
+            self.default("create " + arg)
 
     def create_board(self, arg):
         argv = arg.split(" ")
@@ -197,7 +197,7 @@ class BBSClient(Cmd):
         elif arg.startswith("-mail"):
             self.list_mail(arg)
         else:
-            self.default("list" + arg)
+            self.default("list " + arg)
 
     def list_board(self, arg):
         argv = arg.split(" ")
@@ -256,7 +256,7 @@ class BBSClient(Cmd):
         elif arg.startswith("-mail"):
             self.delete_mail(arg)
         else:
-            self.default("delete" + arg)
+            self.default("delete " + arg)
 
     def delete_post(self, arg):
         argv = arg.split(" ")
@@ -272,7 +272,7 @@ class BBSClient(Cmd):
     def do_update(self, arg):
         argv = arg.split(" ")
         if argv[0] != "-post":
-            self.default("update")
+            self.default("update ")
             return
         if len(argv) < 4:
             self.help_update()
@@ -416,7 +416,8 @@ class BBSClient(Cmd):
         print("{:8}{:12}{:12}{:12}".format("ID", "Subject", "From", "Date"))
         for mail in self.mail_list:
             i = i + 1
-            print("{:8}{:12}{:12}{:12}".format(str(i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
+            print("{:8}{:12}{:12}{:12}".format(str(
+                i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
 
     def do_retr(self, arg):
         argv = arg.split(" ")
@@ -431,7 +432,7 @@ class BBSClient(Cmd):
             return
         if len(self.mail_list) == 0:
             r = requests.get(base_url + '/list-mail',
-                         headers={"Auth": self.auth_token['IdToken']})
+                             headers={"Auth": self.auth_token['IdToken']})
             self.mail_list = r.json()
 
         try:
@@ -441,16 +442,17 @@ class BBSClient(Cmd):
             return
 
         r = requests.post(base_url + '/retr-mail',
-                              data=json.dumps(
-                                  {"key": '{}|{}|{}'.format(mail[0], mail[1], mail[2])}),
-                              headers={"Auth": self.auth_token['IdToken']})
-                            
+                          data=json.dumps(
+                              {"key": '{}|{}|{}'.format(mail[0], mail[1], mail[2])}),
+                          headers={"Auth": self.auth_token['IdToken']})
+
         presigned_url = r.json()
         r = requests.get(presigned_url)
         if r.status_code == 200:
             print("Subject  : " + mail[0])
             print("From     : " + mail[1])
-            print("Date     : " + datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d"))
+            print("Date     : " +
+                  datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d"))
             print("--")
             print(r.text.replace("<br>", "\n"))
             print("--")
@@ -460,7 +462,27 @@ class BBSClient(Cmd):
             print(r.text)
 
     def delete_mail(self, arg):
-        pass
+        argv = arg.split(" ")
+        if len(self.mail_list) == 0:
+            r = requests.get(base_url + '/list-mail',
+                             headers={"Auth": self.auth_token['IdToken']})
+            self.mail_list = r.json()
+        try:
+            mail = self.mail_list[int(argv[1])-1]
+        except IndexError:
+            print("No such mail.")
+            return
+
+        r = requests.post(base_url + '/delete-mail',
+                          data=json.dumps(
+                              {"key": '{}|{}|{}'.format(mail[0], mail[1], mail[2])}),
+                          headers={"Auth": self.auth_token['IdToken']})
+
+        if r.status_code == 200:
+            del self.mail_list[int(argv[1])-1]
+            print("Mail deleted.")
+        else:
+            print(r.text)
 
     def help_mail(self):
         print("Usage: mail-to <username> --subject <subject> --content <content>")
