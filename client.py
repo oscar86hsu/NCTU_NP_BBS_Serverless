@@ -347,7 +347,7 @@ class BBSClient(Cmd):
             self.help_mail()
             return
         elif argv[0] != "-to":
-            self.default("mail")
+            self.default("mail" + arg)
             return
 
         subject = ""
@@ -418,11 +418,55 @@ class BBSClient(Cmd):
             i = i + 1
             print("{:8}{:12}{:12}{:12}".format(str(i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
 
+    def do_retr(self, arg):
+        argv = arg.split(" ")
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+        if argv[0] != "-mail":
+            self.default("retr" + arg)
+            return
+        if len(argv) < 2:
+            self.help_retr()
+            return
+        if len(self.mail_list) == 0:
+            r = requests.get(base_url + '/list-mail',
+                         headers={"Auth": self.auth_token['IdToken']})
+            self.mail_list = r.json()
+
+        try:
+            mail = self.mail_list[int(argv[1])-1]
+        except IndexError:
+            print("No such mail.")
+            return
+
+        r = requests.post(base_url + '/retr-mail',
+                              data=json.dumps(
+                                  {"key": '{}|{}|{}'.format(mail[0], mail[1], mail[2])}),
+                              headers={"Auth": self.auth_token['IdToken']})
+                            
+        presigned_url = r.json()
+        r = requests.get(presigned_url)
+        if r.status_code == 200:
+            print("Subject  : " + mail[0])
+            print("From     : " + mail[1])
+            print("Date     : " + datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d"))
+            print("--")
+            print(r.text.replace("<br>", "\n"))
+            print("--")
+        elif r.status_code == 404:
+            print("No such mail.")
+        else:
+            print(r.text)
+
     def delete_mail(self, arg):
         pass
 
     def help_mail(self):
         print("Usage: mail-to <username> --subject <subject> --content <content>")
+
+    def help_retr(self):
+        print("Usage: retr-mail <mail#>")
 
     ####################################### MISC #######################################
 
