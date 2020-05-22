@@ -103,6 +103,6 @@ if __name__ == "__main__":
                 }
             }
         },
-        "body": '{"post_id": "6", "update":"comment", "content":"comment"}'
+        "body": '{"post_id": "1", "update":"comment", "content":"comment"}'
     }
     print(json.dumps(lambda_handler(event, {})))

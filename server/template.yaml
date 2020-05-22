@@ -256,6 +256,24 @@ Resources:
             Method: post
             RestApiId: !Ref NctuBBSApi
 
+  MailToFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/mail_to/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /mail-to
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+          
+
 
 Outputs:
   ApiUrl:

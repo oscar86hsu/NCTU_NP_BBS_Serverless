@@ -16,6 +16,7 @@ class BBSClient(Cmd):
     prompt = '% '
     auth_token = None
     username = None
+    mail_list = []
 
     ####################################### SETUP #######################################
     def default(self, line):
@@ -180,7 +181,7 @@ class BBSClient(Cmd):
                 "content": content,
                 "author": self.username,
                 "date": date,
-                "comment": {}
+                "comment": []
             }
             r = requests.put(presigned_url,
                               json=post_data)
@@ -230,9 +231,6 @@ class BBSClient(Cmd):
                           data=json.dumps({"board": argv[1], "key": key}))
         print(r.json())
 
-    def list_mail(self, arg):
-        pass
-
     def do_read(self, arg):
         r = requests.post(base_url + '/read',
                           data=json.dumps({"post_id": arg}))
@@ -270,9 +268,6 @@ class BBSClient(Cmd):
                               {"post_id": argv[1]}),
                           headers={"Auth": self.auth_token['IdToken']})
         print(r.json())
-
-    def delete_mail(self, arg):
-        pass
 
     def do_update(self, arg):
         argv = arg.split(" ")
@@ -321,8 +316,10 @@ class BBSClient(Cmd):
     def help_list(self, arg):
         if arg == "board":
             print("Usage: list-board ##<key>")
-        else:
+        elif arg == "post":
             print("Usage: list-post <board-name> ##<key>")
+        else:
+            print("Usage: list-mail")
 
     def help_create(self, arg):
         if arg == "board":
@@ -342,6 +339,85 @@ class BBSClient(Cmd):
     def help_comment(self):
         print("Usage: comment <post-id> <comment>")
 
+    ####################################### MAIL #######################################
+    def do_mail(self, arg):
+        argv = arg.split(" ")
+        if self.auth_token == None:
+            print("Please login first.")
+        elif len(argv) < 3
+            self.help_mail()
+        elif argv[0] != "-to":
+            self.default("mail")
+
+        subject = ""
+        content = ""
+        tmp = ""
+        date = datetime.now().strftime("%Y-%m-%d")
+
+        try:
+            subject_index = argv.index("--subject")
+        except ValueError:
+            self.help_mail()
+            return
+
+        try:
+            content_index = argv.index("--content")
+        except ValueError:
+            self.help_mail()
+            return
+
+        while subject_index < (len(argv) - 1):
+            subject_index += 1
+            tmp = argv[subject_index]
+            if tmp == "--content":
+                break
+            subject += argv[subject_index] + " "
+
+        tmp = ""
+        while content_index < (len(argv) - 1):
+            content_index += 1
+            tmp = argv[content_index]
+            if tmp == "--subject":
+                break
+            content += argv[content_index] + " "
+
+        subject = subject[:-1]
+        content = content[:-1]
+        if len(subject) == 0:
+            print("Subject cannot be empty!\n")
+            return
+        else:
+            r = requests.post(base_url + '/mail-to',
+                              data=json.dumps({"to": argv[1], "subject": subject}),
+                              headers={"Auth": self.auth_token['IdToken']})
+            if r.status_code != 200:
+                print(r.json())
+                return
+
+            presigned_url = r.json()
+            mail_data = {
+                "subject": subject,
+                "content": content,
+                "from": self.username,
+                "date": date
+            }
+            r = requests.put(presigned_url,
+                              json=mail_data)
+            if r.status_code == 200:
+                print("Sent successfully.")
+            elif r.status_code == 404:
+                print("{} does not exist.".format(argv[1]))
+        
+    def list_mail(self, arg):
+        pass
+
+    def delete_mail(self, arg):
+        pass
+
+    def help_mail(self):
+        print("Usage: mail-to <username> --subject <subject> --content <content>")
+
+    
     ####################################### MISC #######################################
     def encode_password(self, password):
         hash_key = "nctu_bbs".encode()
