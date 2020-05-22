@@ -1,6 +1,6 @@
 import json
 import boto3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 client = boto3.client('dynamodb')
 s3 = boto3.client('s3')
@@ -31,7 +31,8 @@ def lambda_handler(event, context):
     except KeyError:
         index = 1
     bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
-    date = datetime.now().strftime("%m/%d")
+    now = datetime.utcnow() + timedelta(hours=8)
+    date = now.strftime("%m/%d")
     key = 'post/{}-{}'.format(title, date)
     path = 'https://{}.s3.ap-northeast-1.amazonaws.com/{}'.format(bucket, key)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from cmd import Cmd
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import requests
 import json
@@ -131,7 +131,8 @@ class BBSClient(Cmd):
         title = ""
         content = ""
         tmp = ""
-        date = datetime.now().strftime("%Y-%m-%d")
+        now = datetime.utcnow() + timedelta(hours=8)
+        date = now.strftime("%Y-%m-%d")
 
         try:
             title_index = argv.index("--title")
