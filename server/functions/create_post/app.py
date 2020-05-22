@@ -11,7 +11,6 @@ def lambda_handler(event, context):
     username = event['requestContext']['authorizer']['claims']['cognito:username']
     board = body['board']
     title = body['title']
-    content = body['content']
 
     item = client.get_item(
         TableName='nctu-bbs-boards',
@@ -70,18 +69,20 @@ def lambda_handler(event, context):
             }
         })
 
-    body['date'] = date
-    body['comment'] = []
-    body['author'] = username
-    response = s3.put_object(
-        ACL='public-read',
-        Body=json.dumps(body).encode(),
-        Bucket=bucket,
-        Key=key)
+    response = s3.generate_presigned_url(
+        ClientMethod='put_object',
+        Params={
+            'Bucket': bucket,
+            'Key': key,
+            'ACL': 'public-read',
+            'ContentType': 'application/json'
+        },
+        ExpiresIn=60
+    )
 
     return {
         "statusCode": 200,
-        "body": json.dumps("Create post successfully.")
+        "body": json.dumps(response)
     }
 
 
@@ -99,4 +100,4 @@ if __name__ == "__main__":
         },
         "body": '{"board": "board0", "title":"title", "content":"content"}'
     }
-    print(json.dumps(lambda_handler(event, {})))
+    print(json.loads(lambda_handler(event, {})['body']))

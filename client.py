@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from cmd import Cmd
+from datetime import datetime
 import hashlib
 import requests
 import json
@@ -130,6 +131,7 @@ class BBSClient(Cmd):
         title = ""
         content = ""
         tmp = ""
+        date = datetime.now().strftime("%Y-%m-%d")
 
         try:
             title_index = argv.index("--title")
@@ -165,10 +167,26 @@ class BBSClient(Cmd):
             return
         else:
             r = requests.post(base_url + '/create-post',
-                              data=json.dumps(
-                                  {"board": argv[1], "title": title, "content": content}),
+                              data=json.dumps({"board": argv[1], "title": title}),
                               headers={"Auth": self.auth_token['IdToken']})
-            print(r.json())
+            if r.status_code != 200:
+                print(r.json())
+                return
+
+            presigned_url = r.json()
+            post_data = {
+                "board": argv[1],
+                "title": title,
+                "content": content,
+                "author": self.username,
+                "date": date,
+                "comment": {}
+            }
+            r = requests.put(presigned_url,
+                              json=post_data)
+            if r.status_code == 200:
+                print("Create post successfully.")
+            
 
     def do_list(self, arg):
         if arg.startswith("-board"):
