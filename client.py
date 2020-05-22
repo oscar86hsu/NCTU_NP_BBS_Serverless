@@ -416,7 +416,7 @@ class BBSClient(Cmd):
         for mail in self.mail_list:
             i = i + 1
             print("    {:8}{:12}{:12}{:12}".format(str(
-                i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
+                i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%m/%d")))
 
     def do_retr(self, arg):
         argv = arg.split(" ")

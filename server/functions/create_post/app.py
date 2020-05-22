@@ -31,7 +31,7 @@ def lambda_handler(event, context):
     except KeyError:
         index = 1
     bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
-    date = datetime.now().strftime("%Y-%m-%d")
+    date = datetime.now().strftime("%m/%d")
     key = 'post/{}-{}'.format(title, date)
     path = 'https://{}.s3.ap-northeast-1.amazonaws.com/{}'.format(bucket, key)
 
