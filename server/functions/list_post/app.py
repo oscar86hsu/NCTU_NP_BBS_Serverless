@@ -18,7 +18,7 @@ def lambda_handler(event, context):
             "body": json.dumps("Board does not exist.")
         }
     
-    results = "{:8}{:12}{:12}{:12}\n".format("ID", "Title", "Author", "Date")
+    results = "    {:8}{:20}{:12}{:12}\n".format("ID", "Title", "Author", "Date")
     response = client.scan(TableName='nctu-bbs-posts')
     sorted_item = sorted(response['Items'], key=lambda k: int(k['id']['N'])) 
     for item in sorted_item:
@@ -26,11 +26,11 @@ def lambda_handler(event, context):
             continue
         if (len(key) > 0) and (key not in item['title']['S']):
             continue
-        results += "{:8}{:12}{:12}{:12}\n".format(item['id']['N'], item['title']['S'], item['author']['S'], item['date']['S'])
+        results += "    {:8}{:20}{:12}{:12}\n".format(item['id']['N'], item['title']['S'], item['author']['S'], item['date']['S'])
 
     return {
         "statusCode": 200,
-        "body": json.dumps(results)
+        "body": json.dumps(results[:-1])
     }
 
 if __name__ == "__main__":

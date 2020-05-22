@@ -29,7 +29,6 @@ class BBSClient(Cmd):
         if len(arg) > 0:
             self.default('exit ' + arg)
         else:
-            print("Bye")
             return True
 
     ####################################### AUTH #######################################
@@ -239,14 +238,14 @@ class BBSClient(Cmd):
             print(post_path)
             return
         post = requests.get(post_path).json()
-        print("Author  : " + post['author'])
-        print("Title   : " + post['title'])
-        print("Date    : " + post['date'])
-        print("--")
-        print(post['content'].replace("<br>", "\n"))
-        print("--")
+        print("    Author  : " + post['author'])
+        print("    Title   : " + post['title'])
+        print("    Date    : " + post['date'])
+        print("    --")
+        print("    " + post['content'].replace("<br>", "\n"))
+        print("    --")
         for c in post['comment']:
-            print("{} : {}".format(c['username'], c['comment']))
+            print("    {} : {}".format(c['username'], c['comment']))
 
     def do_delete(self, arg):
         if self.auth_token == None:
@@ -413,10 +412,10 @@ class BBSClient(Cmd):
                          headers={"Auth": self.auth_token['IdToken']})
         self.mail_list = r.json()
         i = 0
-        print("{:8}{:12}{:12}{:12}".format("ID", "Subject", "From", "Date"))
+        print("    {:8}{:12}{:12}{:12}".format("ID", "Subject", "From", "Date"))
         for mail in self.mail_list:
             i = i + 1
-            print("{:8}{:12}{:12}{:12}".format(str(
+            print("    {:8}{:12}{:12}{:12}".format(str(
                 i), mail[0], mail[1], datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d")))
 
     def do_retr(self, arg):
@@ -449,13 +448,13 @@ class BBSClient(Cmd):
         presigned_url = r.json()
         r = requests.get(presigned_url)
         if r.status_code == 200:
-            print("Subject  : " + mail[0])
-            print("From     : " + mail[1])
-            print("Date     : " +
+            print("    Subject  : " + mail[0])
+            print("    From     : " + mail[1])
+            print("    Date     : " +
                   datetime.fromtimestamp(int(mail[2])).strftime("%Y-%m-%d"))
-            print("--")
-            print(r.text.replace("<br>", "\n"))
-            print("--")
+            print("    --")
+            print("    " + r.text.replace("<br>", "\n"))
+            print("    --")
         elif r.status_code == 404:
             print("No such mail.")
         else:
@@ -497,9 +496,6 @@ class BBSClient(Cmd):
         encode_password = hashlib.sha256(hash_key)
         encode_password.update(password.encode())
         return encode_password.hexdigest()
-
-    def do_id(self, arg):
-        print(self.auth_token['IdToken'])
 
 
 if __name__ == "__main__":
