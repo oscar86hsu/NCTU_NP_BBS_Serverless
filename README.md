@@ -35,7 +35,7 @@ This program is built from AWS SAM and can be deploy by AWS CLI.
 | exit | Close connection. |
 
 ## Usage
-- Server : Run `sam build && deploy` in server folder.
+- Server : Run `sam build && sam deploy` in server folder.
 
 - Client : `./client.py <Server API Address>`
 
