@@ -5,6 +5,7 @@ Bulletin Board System (BBS).
 The program handles multiple connections and receives user command from standard input.
 <br>
 This program is built from AWS SAM and can be deploy by AWS CLI.
+<br>
 ---
 
 ## Requirement
