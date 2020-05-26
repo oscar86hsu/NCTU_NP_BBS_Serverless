@@ -27,10 +27,7 @@ This program is built from AWS SAM and can be deploy by AWS CLI.
 | delete-post `<post-id>` | Delete the post which ID is `<post-id>`.<br>Only the post owner can delete the post.<br>If the user is not the post owner, show failed message, otherwise it is success. |
 | update-post `<post-id>` --title/content `<new>` | Update the post which ID is `<post-id>`.<Br>Use -- to decide which to modify, title or content, and replaced by `<new>`.<br>Only the post owner can update the post. If the user is not the post owner, show failed message, otherwise it is success. |
 | comment `<post-id> <comment>` | Leave a comment `<comment>` at the post which ID is `<post-id>` |
-| mail-to `<username>` --subject `<subject>` --content `<content>` | Send a mail whose subject is `<subject>` and content is `<content>` to user `<username>`.<br>
-Use --subject and --content to separate subject and content.
-`<subject>` has the same format as `<title>` of the post.
-`<content>` has the same format as `<content>` of the post. |
+| mail-to `<username>` --subject `<subject>` --content `<content>` | Send a mail whose subject is `<subject>` and content is `<content>` to user `<username>`.<br>Use --subject and --content to separate subject and content.<br>`<subject>` has the same format as `<title>` of the post.<br>`<content>` has the same format as `<content>` of the post. |
 | list-mail | List all incoming mails of the current logged in user. |
 | retr-mail `<mail#>` | Retrieve the content of the mail `<mail#>` |
 | delete-mail `<mail#>` | Delete mail `<mail#>` from your mailbox. |
