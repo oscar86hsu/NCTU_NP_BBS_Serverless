@@ -1,9 +1,9 @@
-0:register venus venus@nctu.edu.tw 11131
-1:register apollo apollo@nctu.edu.tw 15313
-2:register mars mars@nctu.edu.tw 11215
-3:register mercury mercury@nctu.edu.tw 13154
-2:register apollo apollo@nctu.edu.tw 15313
-1:register mars mars@nctu.edu.tw 11215
+0:register diana diana@nctu.edu.tw 53321
+1:register ceres ceres@nctu.edu.tw 10214
+2:register minerva minerva@nctu.edu.tw 42424
+3:register vulcanus vulcanus@nctu.edu.tw 15151
+2:register ceres ceres@nctu.edu.tw 15313
+0:register minerva minerva@nctu.edu.tw 11215
 0:exit
 1:exit
 2:exit

@@ -3,21 +3,20 @@
 ********************************
 % Please login first.
 % Please login first.
-% Welcome, apollo.
-% jupiter does not exist.
+% Welcome, ceres.
+% Sent successfully.
 % 	ID	Subject	From	Date
-	1	hi apollo	venus	05/23
-	2	hello apollo	mars	05/23
+	1	hello ceres	minerva	05/25
+	2	Which post?	diana	05/25
 % No such mail.
-% 	Subject	:hello apollo
-	From	:mars
-	Date	:2020-05-23
+% 	Subject	:Which post?
+	From	:diana
+	Date	:2020-05-25
 	--
-	Apollo!
-	Are you there
+	Can you tell me the title?
 % No such mail.
 % Mail deleted.
 % 	ID	Subject	From	Date
-	1	hello apollo	mars	05/23
-% Bye, apollo.
+	1	Which post?	diana	05/25
+% Bye, ceres.
 % 

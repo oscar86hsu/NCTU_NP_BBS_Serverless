@@ -2,30 +2,23 @@
 ** Welcome to the BBS server. **
 ********************************
 % Please login first.
-% Welcome, venus.
-% 	Author	:venus
-	Title	:hello my second post
-	Date	:2020-05-23
+% Welcome, diana.
+% 	Author	:ceres
+	Title	:I am here.
+	Date	:2020-05-25
 	--
-	This is my second post.
+	Do you read my post
 	--
-% 	Author	:mars
-	Title	:How are you
-	Date	:2020-05-23
+% 	Author	:vulcanus
+	Title	:Hello everyone
+	Date	:2020-05-25
 	--
-	Err...
-	Ya!
+	Hello I am vulcanus.
 	--
 % Update successfully.
-% 	Author	:mars
-	Title	:How are you
-	Date	:2020-05-23
-	--
-	Hey there!
-	--
-	mercury:Hi!
+% Comment successfully.
 % Delete successfully.
 % Post does not exist.
-% Bye, venus.
+% Bye, diana.
 % Please login first.
 % 

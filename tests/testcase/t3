@@ -1,16 +1,19 @@
-0:create-post hi_ih --title hello my first post --content This is my first post
-2:create-post he_eh --title How are you --content Err...<br>Ya! 
-0:login venus 11131
-1:login apollo 15313
-2:login mars 11215
-3:login mercury 13154
-0:create-post hu_uh --title hello my first post --content This is my first post
-0:create-post hi_ih --title hello my first post --content This is my first post
-2:create-post he_eh --title How are you --content Err...<br>Ya! 
-1:list-post hi_ih
+0:create-post li_il --title nphw3demo --content Time to demo
+0:login diana 53321
+1:login ceres 10214
+2:login minerva 42424
+3:login vulcanus 15151
+0:create-post li_il --title nphw3demo --content Time to demo
+1:create-post kt_tk --title NP demo time --content When is demo time
+3:create-post ke_ek --title Hello everyone --content Hello I am vulcanus.
+2:create-post ke_ek --title Anyone here --content My first post.<br>Ya!
+1:create-post li_il --title NP demo time --content When is demo time
+2:list-post li_il
 3:list-post he_eh
-0:list-post hi_ih ##hello
-0:create-post hi_ih --title hello my second post --content This is my second post.
+0:list-post li_il ##demo
+1:create-post ke_ek --title I am here. --content Do you read  my post
+2:create-post ke_ek --title HaHa --content I read that.<br>Ya!
+3:list-post ke_ek
 0:logout
 1:logout
 2:logout

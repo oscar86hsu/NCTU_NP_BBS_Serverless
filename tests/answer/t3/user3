@@ -1,8 +1,13 @@
 ********************************
 ** Welcome to the BBS server. **
 ********************************
-% Welcome, mercury.
+% Welcome, vulcanus.
+% Create post successfully.
+% Board does not exist.
 % 	ID	Title	Author	Date
-	2	How are you	mars	05/23
-% Bye, mercury.
+	2	Hello everyone	vulcanus	05/25
+	3	Anyone here	minerva	05/25
+	5	I am here.	ceres	05/25
+	6	HaHa	minerva	05/25
+% Bye, vulcanus.
 % 

@@ -1,14 +1,16 @@
-0:mail-to apollo --subject hi apollo --content Follow me!
+0:mail-to ceres --subject hi ceres --content I am Diana.
 1:retr-mail 1
 1:delete-mail 1
-0:login venus 11131
-1:login apollo 15313
-2:login mars 11215
-3:login mercury 13154
-0:mail-to apollo --subject hi apollo --content Follow me!
-1:mail-to jupiter --subject hi jupiter --content Jupiter!<br>Are you there
-2:mail-to apollo --subject hello apollo --content Apollo!<br>Are you there
-3:mail-to mars --subject hello mars --content Mars!<br>Are you there
+0:login diana 53321
+1:login ceres 10214
+2:login minerva 42424
+3:login vulcanus 15151
+1:mail-to diana --subject Where is the post --content Did you delete that post? 
+0:list-mail
+2:mail-to ceres --subject hello ceres --content Ceres!
+0:retr-mail 1
+3:mail-to minerva --subject Hi. Minerva --content Hi Minerva<br>Follow me!
+0:mail-to ceres --subject Which post? --content Can you tell me the title?
 1:list-mail
 2:list-mail
 1:retr-mail 3
