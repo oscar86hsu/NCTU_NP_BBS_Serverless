@@ -118,7 +118,7 @@ Resources:
     Properties:
       CodeUri: functions/hello_world/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         HelloWorld:
@@ -133,7 +133,7 @@ Resources:
     Properties:
       CodeUri: functions/register/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -148,7 +148,7 @@ Resources:
     Properties:
       CodeUri: functions/create_board/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -165,7 +165,7 @@ Resources:
     Properties:
       CodeUri: functions/create_post/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -182,7 +182,7 @@ Resources:
     Properties:
       CodeUri: functions/list_board/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -197,7 +197,7 @@ Resources:
     Properties:
       CodeUri: functions/list_post/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -212,7 +212,7 @@ Resources:
     Properties:
       CodeUri: functions/read/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -227,7 +227,7 @@ Resources:
     Properties:
       CodeUri: functions/delete_post/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -244,7 +244,7 @@ Resources:
     Properties:
       CodeUri: functions/update/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -261,7 +261,7 @@ Resources:
     Properties:
       CodeUri: functions/mail_to/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -278,7 +278,7 @@ Resources:
     Properties:
       CodeUri: functions/list_mail/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -295,7 +295,7 @@ Resources:
     Properties:
       CodeUri: functions/retr_mail/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
@@ -312,7 +312,7 @@ Resources:
     Properties:
       CodeUri: functions/delete_mail/
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Register:
