@@ -420,6 +420,23 @@ Resources:
             Path: /delete-mail
             Method: post
             RestApiId: !Ref NctuBBSApi
+
+  ListSubFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/list_sub/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /list-sub
+            Method: get
+            RestApiId: !Ref NctuBBSApi
           
 
 

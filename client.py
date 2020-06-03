@@ -196,6 +196,8 @@ class BBSClient(Cmd):
             self.list_post(arg)
         elif arg.startswith("-mail"):
             self.list_mail(arg)
+        elif arg.startswith("-sub"):
+            self.list_sub(arg)
         else:
             self.default("list " + arg)
 
@@ -316,6 +318,8 @@ class BBSClient(Cmd):
             print("Usage: list-board ##<key>")
         elif arg == "post":
             print("Usage: list-post <board-name> ##<key>")
+        elif arg == "sub":
+            print("Usage: list-sub")
         else:
             print("Usage: list-mail")
 
@@ -489,6 +493,25 @@ class BBSClient(Cmd):
 
     def help_retr(self):
         print("Usage: retr-mail <mail#>")
+
+    #################################### SUBSCRIBE #####################################
+    def do_subscribe(self, arg):
+        pass
+
+    def do_unsubscribe(self, arg):
+        pass
+
+    def list_sub(self, arg):
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+        r = requests.get(base_url + '/list-sub',
+                         headers={"Auth": self.auth_token['IdToken']})
+        if r.status_code == 200:
+                print(r.json())
+                return
+        else:
+            print(r.text)
 
     ####################################### MISC #######################################
 
