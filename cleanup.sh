@@ -35,8 +35,35 @@ aws dynamodb scan \
   | tr '\n' '\0' \
   | xargs -0 -t -I keyItem \
     aws dynamodb delete-item --table-name nctu-bbs-next-id --key=keyItem
-# aws dynamodb list-tables | jq -r '.TableNames | .[] | select(startswith("oscarhsu-nctu-bbs"))' |
-# while read table; do
-#   echo "Deleting Table $table";
-#   aws dynamodb delete-table --table-name $table > /dev/null 2>&1
-# done
+
+aws dynamodb scan \
+  --attributes-to-get username \
+  --table-name nctu-bbs-connection-id --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-connection-id --key=keyItem
+
+aws dynamodb scan \
+  --attributes-to-get author \
+  --table-name nctu-bbs-author-sub --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-author-sub --key=keyItem
+
+aws dynamodb scan \
+  --attributes-to-get board \
+  --table-name nctu-bbs-board-sub --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-board-sub --key=keyItem
+
+aws dynamodb scan \
+  --attributes-to-get username \
+  --table-name nctu-bbs-user-sub --query "Items[*]" \
+  | jq --compact-output '.[]' \
+  | tr '\n' '\0' \
+  | xargs -0 -t -I keyItem \
+    aws dynamodb delete-item --table-name nctu-bbs-user-sub --key=keyItem
