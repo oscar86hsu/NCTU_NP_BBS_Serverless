@@ -45,7 +45,7 @@ aws dynamodb scan \
     aws dynamodb delete-item --table-name nctu-bbs-connection-id --key=keyItem
 
 aws dynamodb scan \
-  --attributes-to-get author \
+  --attributes-to-get subscribe \
   --table-name nctu-bbs-author-sub --query "Items[*]" \
   | jq --compact-output '.[]' \
   | tr '\n' '\0' \
@@ -53,17 +53,9 @@ aws dynamodb scan \
     aws dynamodb delete-item --table-name nctu-bbs-author-sub --key=keyItem
 
 aws dynamodb scan \
-  --attributes-to-get board \
+  --attributes-to-get subscribe \
   --table-name nctu-bbs-board-sub --query "Items[*]" \
   | jq --compact-output '.[]' \
   | tr '\n' '\0' \
   | xargs -0 -t -I keyItem \
     aws dynamodb delete-item --table-name nctu-bbs-board-sub --key=keyItem
-
-aws dynamodb scan \
-  --attributes-to-get username \
-  --table-name nctu-bbs-user-sub --query "Items[*]" \
-  | jq --compact-output '.[]' \
-  | tr '\n' '\0' \
-  | xargs -0 -t -I keyItem \
-    aws dynamodb delete-item --table-name nctu-bbs-user-sub --key=keyItem

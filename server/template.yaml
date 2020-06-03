@@ -34,7 +34,6 @@ Globals:
         CONNECTION_TABLE: !Join ["-", [!Ref Prefix, "connection-id"]]
         AUTHOR_SUB_TABLE: !Join ["-", [!Ref Prefix, "author-sub"]]
         BOARD_SUB_TABLE: !Join ["-", [!Ref Prefix, "board-sub"]]
-        USER_SUB_TABLE: !Join ["-", [!Ref Prefix, "user-sub"]]
 
 Resources:
   UserPool:
@@ -135,10 +134,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties: 
       AttributeDefinitions: 
-        - AttributeName: author
+        - AttributeName: subscribe
           AttributeType: S
       KeySchema: 
-        - AttributeName: author
+        - AttributeName: subscribe
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       TableName: !Join
@@ -150,10 +149,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties: 
       AttributeDefinitions: 
-        - AttributeName: board
+        - AttributeName: subscribe
           AttributeType: S
       KeySchema: 
-        - AttributeName: board
+        - AttributeName: subscribe
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       TableName: !Join
@@ -161,20 +160,6 @@ Resources:
                   - - !Ref Prefix
                     - 'board-sub'
 
-  UserSubTable:
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      AttributeDefinitions: 
-        - AttributeName: username
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: username
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
-      TableName: !Join
-                  - '-'
-                  - - !Ref Prefix
-                    - 'user-sub'
 
   NctuBBSApi:
     Type: AWS::Serverless::Api
@@ -437,7 +422,41 @@ Resources:
             Path: /list-sub
             Method: get
             RestApiId: !Ref NctuBBSApi
-          
+
+  SubscribeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/subscribe/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /subscribe
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
+  UnsubscribeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/unsubscribe/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: NctuBbsApiAuthorizer
+            Path: /unsubscribe
+            Method: post
+            RestApiId: !Ref NctuBBSApi
+
 
 
 Outputs:

@@ -417,7 +417,8 @@ class BBSClient(Cmd):
                          headers={"Auth": self.auth_token['IdToken']})
         self.mail_list = r.json()
         i = 0
-        print("    {:8}{:12}{:12}{:12}".format("ID", "Subject", "From", "Date"))
+        print("    {:8}{:12}{:12}{:12}".format(
+            "ID", "Subject", "From", "Date"))
         for mail in self.mail_list:
             i = i + 1
             print("    {:8}{:12}{:12}{:12}".format(str(
@@ -496,10 +497,83 @@ class BBSClient(Cmd):
 
     #################################### SUBSCRIBE #####################################
     def do_subscribe(self, arg):
-        pass
+        argv = arg.split(" ")
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+
+        if argv[0] == "--board":
+            index = argv.index("--board")
+        elif argv[0] == "--author":
+            index = argv.index("--author")
+        else:
+            self.help_subscribe("")
+            return
+
+        try:
+            keyword_index = argv.index("--keyword")
+        except ValueError:
+            self.help_subscribe(argv[0])
+            return
+
+        subs = ""
+        keyword = ""
+        tmp = ""
+
+        while index < (len(argv) - 1):
+            index += 1
+            tmp = argv[index]
+            if tmp == "--keyword":
+                break
+            subs += argv[index] + " "
+
+        tmp = ""
+        while keyword_index < (len(argv) - 1):
+            keyword_index += 1
+            tmp = argv[keyword_index]
+            if tmp == "--author":
+                break
+            keyword += argv[keyword_index] + " "
+
+        if (len(subs) < 1) or (len(keyword) < 1):
+            self.help_subscribe(argv[0])
+            return
+
+        subs = subs[:-1]
+        keyword = keyword[:-1]
+
+        r = requests.post(base_url + '/subscribe',
+                          data=json.dumps(
+                              {argv[0][2:]: argv[1], "keyword": keyword}),
+                          headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
 
     def do_unsubscribe(self, arg):
-        pass
+        argv = arg.split(" ")
+        if self.auth_token == None:
+            print("Please login first.")
+            return
+
+        if len(argv) < 1:
+            self.help_unsubscribe("")
+            return
+
+        if len(argv) < 2:
+            self.help_unsubscribe(argv[0])
+            return
+
+        if (argv[0] != "--board") and (argv[0] != "--author"):
+            self.help_unsubscribe("")
+            return
+
+        r = requests.post(base_url + '/unsubscribe',
+                          data=json.dumps(
+                              {argv[0][2:]: arg.replace(argv[0] + " ", "")}),
+                          headers={"Auth": self.auth_token['IdToken']})
+        print(r.json())
+        
+        
+
 
     def list_sub(self, arg):
         if self.auth_token == None:
@@ -508,10 +582,28 @@ class BBSClient(Cmd):
         r = requests.get(base_url + '/list-sub',
                          headers={"Auth": self.auth_token['IdToken']})
         if r.status_code == 200:
-                print(r.json())
-                return
+            print(r.json())
+            return
         else:
             print(r.text)
+
+    def help_unsubscribe(self, arg):
+        if arg == "--board":
+            print("Usage: unsubscribe --board <board-name>")
+        elif arg == "--author":
+            print("usage: unsubscribe --author <author-name>")
+        else:
+            print("Usage: unsubscribe --board <board-name>")
+            print("usage: unsubscribe --author <author-name>")
+
+    def help_subscribe(self, arg):
+        if arg == "--board":
+            print("Usage: subscribe --board <board-name> --keyword <keyword>")
+        elif arg == "--author":
+            print("usage: subscribe --author <author-name> --keyword <keyword>")
+        else:
+            print("Usage: subscribe --board <board-name> --keyword <keyword>")
+            print("usage: subscribe --author <author-name> --keyword <keyword>")
 
     ####################################### MISC #######################################
 
