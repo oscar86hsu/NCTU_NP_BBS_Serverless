@@ -31,6 +31,9 @@ Globals:
         BOARDS_TABLE: !Join ["-", [!Ref Prefix, "boards"]]
         POSTS_TABLE: !Join ["-", [!Ref Prefix, "posts"]]
         ID_TABLE: !Join ["-", [!Ref Prefix, "next-id"]]
+        CONNECTION_TABLE: !Join ["-", [!Ref Prefix, "connection-id"]]
+        AUTHOR_SUB_TABLE: !Join ["-", [!Ref Prefix, "author-sub"]]
+        BOARD_SUB_TABLE: !Join ["-", [!Ref Prefix, "board-sub"]]
 
 Resources:
   UserPool:
@@ -111,6 +114,51 @@ Resources:
                   - '-'
                   - - !Ref Prefix
                     - 'next-id'
+
+  ConnectionTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: username
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: username
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'connection-id'
+
+  AuthorSubTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: author
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: author
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'author-sub'
+
+  BoardSubTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: board
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: board
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'board-sub'
 
   NctuBBSApi:
     Type: AWS::Serverless::Api
