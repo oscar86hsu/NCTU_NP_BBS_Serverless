@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 client = boto3.client('dynamodb')
 
@@ -10,7 +11,7 @@ def lambda_handler(event, context):
 
     try:
         client.put_item(
-            TableName='nctu-bbs-boards',
+            TableName=os.environ['BOARDS_TABLE'],
             Item={
                 'name': {
                     'S': boardname

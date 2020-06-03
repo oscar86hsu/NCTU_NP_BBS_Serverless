@@ -1,12 +1,13 @@
 import json
 import boto3
+import os
 
 client = boto3.client('s3')
 
 
 def lambda_handler(event, context):
     username = event['requestContext']['authorizer']['claims']['cognito:username']
-    bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
+    bucket = '{}-{}'.format(os.environ['BUCKET_PREFIX'], username)
     result = []
 
     response = client.list_objects(

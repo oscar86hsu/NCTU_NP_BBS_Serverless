@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 client = boto3.client('dynamodb')
 s3 = boto3.client('s3')
@@ -10,7 +11,7 @@ def lambda_handler(event, context):
     username = event['requestContext']['authorizer']['claims']['cognito:username']
 
     item = client.get_item(
-        TableName='nctu-bbs-posts',
+        TableName=os.environ['POSTS_TABLE'],
         Key={
             'id': {
                 'N': post_id,
@@ -24,11 +25,11 @@ def lambda_handler(event, context):
                 "body": json.dumps("Not the post owner.")
             }
         s3.delete_object(
-            Bucket='oscarhsu-nctu-bbs-' + username,
+            Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], username),
             Key='post/{}-{}'.format(item['Item']['title']['S'], item['Item']['date']['S']))
 
         client.delete_item(
-            TableName='nctu-bbs-posts',
+            TableName=os.environ['POSTS_TABLE'],
             Key={
                 'id': {
                     'N': post_id,

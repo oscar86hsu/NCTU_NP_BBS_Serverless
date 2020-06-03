@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 cognito = boto3.client('cognito-idp')
 cloudformation = boto3.client('cloudformation')
@@ -27,7 +28,7 @@ def lambda_handler(event, context):
 
     s3.create_bucket(
         ACL='private',
-        Bucket='oscarhsu-nctu-bbs-' + username,
+        Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], username),
         CreateBucketConfiguration={
             'LocationConstraint': 'ap-northeast-1'
         }

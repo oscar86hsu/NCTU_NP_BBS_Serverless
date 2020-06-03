@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 from datetime import datetime, timedelta
 
 client = boto3.client('dynamodb')
@@ -13,7 +14,7 @@ def lambda_handler(event, context):
     title = body['title']
 
     item = client.get_item(
-        TableName='nctu-bbs-boards',
+        TableName=os.environ['BOARDS_TABLE'],
         Key={'name': {'S': board}})
 
     if not "Item" in item:
@@ -23,21 +24,21 @@ def lambda_handler(event, context):
         }
 
     item = client.get_item(
-        TableName='nctu-bbs-next-id',
+        TableName=os.environ['ID_TABLE'],
         Key={'name': {'S': 'post'}})
 
     try:
         index = int(item['Item']['id']['N']) + 1
     except KeyError:
         index = 1
-    bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
+    bucket = '{}-{}'.format(os.environ['BUCKET_PREFIX'], username)
     now = datetime.utcnow() + timedelta(hours=8)
     date = now.strftime("%m/%d")
     key = 'post/{}-{}'.format(title, date)
     path = 'https://{}.s3.ap-northeast-1.amazonaws.com/{}'.format(bucket, key)
 
     client.put_item(
-        TableName='nctu-bbs-next-id',
+        TableName=os.environ['ID_TABLE'],
         Item={
             'name': {
                 'S': "post"
@@ -48,7 +49,7 @@ def lambda_handler(event, context):
         })
 
     client.put_item(
-        TableName='nctu-bbs-posts',
+        TableName=os.environ['POSTS_TABLE'],
         Item={
             'path': {
                 'S': path

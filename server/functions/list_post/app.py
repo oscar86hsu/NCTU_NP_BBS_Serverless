@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 client = boto3.client('dynamodb')
 
@@ -9,7 +10,7 @@ def lambda_handler(event, context):
     board = json.loads(event['body'])['board']
 
     item = client.get_item(
-        TableName='nctu-bbs-boards',
+        TableName=os.environ['BOARDS_TABLE'],
         Key={'name': {'S': board}})
 
     if not "Item" in item:
@@ -19,7 +20,7 @@ def lambda_handler(event, context):
         }
     
     results = "    {:8}{:20}{:12}{:12}\n".format("ID", "Title", "Author", "Date")
-    response = client.scan(TableName='nctu-bbs-posts')
+    response = client.scan(TableName=os.environ['POSTS_TABLE'])
     sorted_item = sorted(response['Items'], key=lambda k: int(k['id']['N'])) 
     for item in sorted_item:
         if board != item['board']['S']:

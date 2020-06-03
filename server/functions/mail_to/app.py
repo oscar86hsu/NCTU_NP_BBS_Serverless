@@ -1,6 +1,7 @@
 import json
 import boto3
 import time
+import os
 
 s3 = boto3.client('s3')
 
@@ -11,7 +12,7 @@ def lambda_handler(event, context):
     receiver = body['to']
     subject = body['subject']
 
-    bucket = 'oscarhsu-nctu-bbs-{}'.format(receiver)
+    bucket = '{}-{}'.format(os.environ['BUCKET_PREFIX'], receiver)
     key = 'mail/{}|{}|{}'.format(subject, username, int(time.time()))
 
     response = s3.generate_presigned_url(

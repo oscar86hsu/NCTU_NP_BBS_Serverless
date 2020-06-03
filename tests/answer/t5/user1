@@ -6,17 +6,17 @@
 % Welcome, ceres.
 % Sent successfully.
 % 	ID	Subject	From	Date
-	1	hello ceres	minerva	05/30
-	2	Which post?	diana	05/30
+	1	hello ceres	minerva	06/03
+	2	Which post?	diana	06/03
 % No such mail.
 % 	Subject	:Which post?
 	From	:diana
-	Date	:2020-05-30
+	Date	:2020-06-03
 	--
 	Can you tell me the title?
 % No such mail.
 % Mail deleted.
 % 	ID	Subject	From	Date
-	1	Which post?	diana	05/30
+	1	Which post?	diana	06/03
 % Bye, ceres.
 % 

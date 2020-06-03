@@ -3,9 +3,34 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   NCTU_BBS
 
+Parameters:
+  DomainName:
+    Type: String
+    Default: bbs.oscarhsu.me
+    Description: The domain name of the application
+  CertificateArn:
+    Type: String
+    Default: arn:aws:acm:ap-northeast-1:440374182634:certificate/3705c935-a0cf-4c05-a49a-19f84d98ae4b
+    Description: The HTTPS certificate ARN of the domain name
+  Prefix:
+    Type: String
+    Default: nctu-bbs
+    Description: Prefix of resources of the application
+  BucketPrefix:
+    Type: String
+    Default: oscarhsu-nctu-bbs
+    Description: Prefix of S3 Bucket of the application
+
 Globals:
   Function:
     Timeout: 60
+    Environment:
+      Variables:
+        PREFIX: !Ref Prefix
+        BUCKET_PREFIX: !Ref BucketPrefix
+        BOARDS_TABLE: !Join ["-", [!Ref Prefix, "boards"]]
+        POSTS_TABLE: !Join ["-", [!Ref Prefix, "posts"]]
+        ID_TABLE: !Join ["-", [!Ref Prefix, "next-id"]]
 
 Resources:
   UserPool:
@@ -36,7 +61,7 @@ Resources:
   UserPoolResourceServer:
     Type: AWS::Cognito::UserPoolResourceServer
     Properties: 
-      Identifier: bbs.oscarhsu.me
+      Identifier: !Ref DomainName
       Name: nctu-bbs-resource-server
       Scopes: 
         - ScopeDescription: auth.token
@@ -53,8 +78,10 @@ Resources:
         - AttributeName: name
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      TableName: nctu-bbs-boards
-
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'boards'
   PostsTable:
     Type: AWS::DynamoDB::Table
     Properties: 
@@ -65,7 +92,10 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      TableName: nctu-bbs-posts
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'posts'
 
   IdTable:
     Type: AWS::DynamoDB::Table
@@ -77,14 +107,17 @@ Resources:
         - AttributeName: name
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      TableName: nctu-bbs-next-id
+      TableName: !Join
+                  - '-'
+                  - - !Ref Prefix
+                    - 'next-id'
 
   NctuBBSApi:
     Type: AWS::Serverless::Api
     Properties:
       Domain: 
-        CertificateArn: arn:aws:acm:ap-northeast-1:440374182634:certificate/3705c935-a0cf-4c05-a49a-19f84d98ae4b
-        DomainName: bbs.oscarhsu.me
+        CertificateArn: !Ref CertificateArn
+        DomainName: !Ref DomainName
       StageName: dev
       Auth:
         Authorizers: 
@@ -329,7 +362,7 @@ Resources:
 Outputs:
   ApiUrl:
     Description: "API Gateway endpoint URL for Prod stage for BBS Server"
-    Value: "https://bbs.oscarhsu.me/"
+    Value: !Join ["", ["https://", !Ref DomainName]]
   UserPoolClientId:
     Description: "User Pool Client Id"
     Value: !Ref UserPoolTokenClient

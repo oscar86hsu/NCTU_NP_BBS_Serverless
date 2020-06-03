@@ -1,6 +1,7 @@
 import json
 import boto3
 import time
+import os
 
 s3 = boto3.client('s3')
 
@@ -9,7 +10,7 @@ def lambda_handler(event, context):
     key = json.loads(event['body'])['key']
     username = event['requestContext']['authorizer']['claims']['cognito:username']
 
-    bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
+    bucket = '{}-{}'.format(os.environ['BUCKET_PREFIX'], username)
     key = 'mail/{}'.format(key)
 
     s3.delete_object(

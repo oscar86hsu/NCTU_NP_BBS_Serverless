@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 client = boto3.client('dynamodb')
 s3 = boto3.client('s3')
@@ -13,7 +14,7 @@ def lambda_handler(event, context):
     username = event['requestContext']['authorizer']['claims']['cognito:username']
 
     item = client.get_item(
-        TableName='nctu-bbs-posts',
+        TableName=os.environ['POSTS_TABLE'],
         Key={
             'id': {
                 'N': post_id,
@@ -31,7 +32,7 @@ def lambda_handler(event, context):
             "body": json.dumps("Post does not exist.")
         }
 
-    response = s3.get_object(Bucket='oscarhsu-nctu-bbs-' + owner,
+    response = s3.get_object(Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], owner),
                                  Key='post/{}-{}'.format(title, date))
     post = json.loads(response['Body'].read())
 
@@ -40,7 +41,7 @@ def lambda_handler(event, context):
         s3.put_object(
             ACL='public-read',
             Body=json.dumps(post).encode(),
-            Bucket='oscarhsu-nctu-bbs-' + owner,
+            Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], owner),
             Key='post/{}-{}'.format(title, date))
         return {
             "statusCode": 200,
@@ -55,17 +56,17 @@ def lambda_handler(event, context):
         
         post[update[2:]] = content
         if update == '--title':
-            bucket = 'oscarhsu-nctu-bbs-{}'.format(username)
+            bucket = '{}-{}'.format(os.environ['BUCKET_PREFIX'], username)
             title = content
             key = 'post/{}-{}'.format(title, date)
             path = 'https://{}.s3.ap-northeast-1.amazonaws.com/{}'.format(
                 bucket, key)
             s3.delete_object(
-                Bucket='oscarhsu-nctu-bbs-' + username,
+                Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], username),
                 Key='post/{}-{}'.format(title, date))
 
             client.update_item(
-                TableName='nctu-bbs-posts',
+                TableName=os.environ['POSTS_TABLE'],
                 Key={
                     'id':
                     {'N': index}
@@ -82,7 +83,7 @@ def lambda_handler(event, context):
         s3.put_object(
             ACL='public-read',
             Body=json.dumps(post).encode(),
-            Bucket='oscarhsu-nctu-bbs-' + owner,
+            Bucket='{}-{}'.format(os.environ['BUCKET_PREFIX'], owner),
             Key='post/{}-{}'.format(title, date))
 
         return {

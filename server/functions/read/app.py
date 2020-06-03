@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 client = boto3.client('dynamodb')
 
@@ -8,7 +9,7 @@ def lambda_handler(event, context):
     post_id = json.loads(event['body'])['post_id']
 
     item = client.get_item(
-        TableName='nctu-bbs-posts',
+        TableName=os.environ['POSTS_TABLE'],
         Key={
             'id': {
                 'N': post_id,
