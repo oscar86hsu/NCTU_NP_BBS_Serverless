@@ -354,7 +354,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        CreateBoard:
           Type: Api
           Properties:
             Auth:
@@ -371,7 +371,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        CreatePost:
           Type: Api
           Properties:
             Auth:
@@ -388,7 +388,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        ListBoard:
           Type: Api
           Properties:
             Path: /list-board
@@ -403,7 +403,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        ListPost:
           Type: Api
           Properties:
             Path: /list-post
@@ -418,7 +418,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        ReadPost:
           Type: Api
           Properties:
             Path: /read
@@ -433,7 +433,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        DeletePost:
           Type: Api
           Properties:
             Auth:
@@ -450,7 +450,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        Update:
           Type: Api
           Properties:
             Auth:
@@ -467,7 +467,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        MailTo:
           Type: Api
           Properties:
             Auth:
@@ -484,7 +484,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        ListMail:
           Type: Api
           Properties:
             Auth:
@@ -501,7 +501,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        RetrMail:
           Type: Api
           Properties:
             Auth:
@@ -518,7 +518,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        DeleteMail:
           Type: Api
           Properties:
             Auth:
@@ -535,7 +535,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        ListSub:
           Type: Api
           Properties:
             Auth:
@@ -552,7 +552,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        Subscribe:
           Type: Api
           Properties:
             Auth:
@@ -569,7 +569,7 @@ Resources:
       Runtime: python3.6
       Role: !GetAtt LambdaExecutionRole.Arn
       Events:
-        Register:
+        Unsubscribe:
           Type: Api
           Properties:
             Auth:
