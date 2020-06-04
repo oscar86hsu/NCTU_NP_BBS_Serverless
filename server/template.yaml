@@ -20,6 +20,15 @@ Parameters:
     Type: String
     Default: oscarhsu-nctu-bbs
     Description: Prefix of S3 Bucket of the application
+  WebsocketDomainName:
+    Type: String
+    Default: websocket.oscarhsu.me
+    Description: The domain name of the websocket
+  WebsocketDomainCert:
+    Type: String
+    Default: arn:aws:acm:ap-northeast-1:440374182634:certificate/7f485a50-c949-449f-926c-08b78e926a1d
+    Description: The certificate ARN of the domain name
+
 
 Globals:
   Function:
@@ -36,6 +45,7 @@ Globals:
         BOARD_SUB_TABLE: !Join ["-", [!Ref Prefix, "board-sub"]]
         USER_POOL_CLIENT_ID: !Ref UserPoolTokenClient
         USER_POOL_ID: !Ref UserPool
+        WEBSOCKET_URL: !Ref WebsocketDomainName
 
 Resources:
   UserPool:
@@ -183,6 +193,22 @@ Resources:
       Name: !Join ["-", [!Ref Prefix, "websocket"]]
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
+
+  WebSocketDomain:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties: 
+      DomainName: !Ref WebsocketDomainName
+      DomainNameConfigurations: 
+        - CertificateArn: !Ref WebsocketDomainCert
+
+  WebSocketApiMapping:
+      Type: AWS::ApiGatewayV2::ApiMapping
+      DependsOn:
+        - WebSocketDomain
+      Properties: 
+        ApiId: !Ref WebSocketApi
+        DomainName: !Ref WebsocketDomainName
+        Stage: dev
 
   WebsocketAuth:
     Type: "AWS::ApiGatewayV2::Authorizer"
