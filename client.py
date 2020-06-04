@@ -6,8 +6,11 @@ import requests
 import json
 import sys
 import boto3
+import threading
+import websocket
 
 base_url = 'http://127.0.0.1'
+websocket_url = "ws://127.0.0.1"
 cognito_client_id = ''
 cognito = boto3.client('cognito-idp')
 
@@ -30,6 +33,24 @@ class BBSClient(Cmd):
             self.default('exit ' + arg)
         else:
             return True
+
+    #################################### WEBSOCKET #####################################
+    def on_message(self, ws, message):
+        print(message.replace('"', ""))
+
+    def websocket_daemon(self):
+        self.ws.run_forever()
+
+    def connect_websocket(self, username, password):
+        self.ws = websocket.WebSocketApp(websocket_url, 
+                                         header={'username:' + username, 'password:' + password}, 
+                                         on_message=self.on_message)
+        t = threading.Thread(target=self.websocket_daemon)
+        t.setDaemon(True)
+        t.start()
+
+    def disconnect_websocket(self):
+        self.ws.close()
 
     ####################################### AUTH #######################################
     def do_register(self, arg):
@@ -66,17 +87,19 @@ class BBSClient(Cmd):
             print("Please logout first.")
         else:
             try:
+                password = self.encode_password(argv[1])
                 response = cognito.initiate_auth(
                     AuthFlow='USER_PASSWORD_AUTH',
                     ClientId=cognito_client_id,
                     AuthParameters={
                         'USERNAME': argv[0],
-                        'PASSWORD': self.encode_password(argv[1])
+                        'PASSWORD': password
                     }
                 )
                 self.auth_token = response['AuthenticationResult']
                 self.username = argv[0]
                 print("Welcome, " + self.username + ".")
+                self.connect_websocket(self.username, password)
             except Exception:
                 print("Login failed.")
 
@@ -87,6 +110,7 @@ class BBSClient(Cmd):
             print("Please login first.")
         else:
             print("Bye, " + self.username + ".")
+            self.disconnect_websocket()
             self.username = None
             self.auth_token = None
 
@@ -571,9 +595,6 @@ class BBSClient(Cmd):
                               {argv[0][2:]: arg.replace(argv[0] + " ", "")}),
                           headers={"Auth": self.auth_token['IdToken']})
         print(r.json())
-        
-        
-
 
     def list_sub(self, arg):
         if self.auth_token == None:
@@ -626,4 +647,5 @@ if __name__ == "__main__":
         exit(1)
     response = r.json()
     cognito_client_id = response['cognito_client_id']
+    websocket_url = response['websocket_url']
     BBSClient().cmdloop(response['message'])
