@@ -37,7 +37,7 @@ aws dynamodb scan \
     aws dynamodb delete-item --table-name nctu-bbs-next-id --key=keyItem
 
 aws dynamodb scan \
-  --attributes-to-get username \
+  --attributes-to-get connection_id \
   --table-name nctu-bbs-connection-id --query "Items[*]" \
   | jq --compact-output '.[]' \
   | tr '\n' '\0' \

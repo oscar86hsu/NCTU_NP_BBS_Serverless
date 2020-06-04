@@ -111,6 +111,8 @@ Resources:
                   - '-'
                   - - !Ref Prefix
                     - 'posts'
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
 
   IdTable:
     Type: AWS::DynamoDB::Table
@@ -131,10 +133,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties: 
       AttributeDefinitions: 
-        - AttributeName: username
+        - AttributeName: connection_id
           AttributeType: S
       KeySchema: 
-        - AttributeName: username
+        - AttributeName: connection_id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       TableName: !Join
@@ -635,6 +637,21 @@ Resources:
             Path: /unsubscribe
             Method: post
             RestApiId: !Ref NctuBBSApi
+
+  PushMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/push_message/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        DBEvent:
+          Type: DynamoDB
+          Properties:
+            Stream: 
+              !GetAtt PostsTable.StreamArn   # This must be the name of a DynamoDB table declared in the same template file
+            StartingPosition: TRIM_HORIZON
 
 
 

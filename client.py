@@ -14,6 +14,10 @@ websocket_url = "ws://127.0.0.1"
 cognito_client_id = ''
 cognito = boto3.client('cognito-idp')
 
+def on_message(ws, message):
+    message = json.loads(message)
+    print()
+    print(message)
 
 class BBSClient(Cmd):
     prompt = '% '
@@ -35,16 +39,13 @@ class BBSClient(Cmd):
             return True
 
     #################################### WEBSOCKET #####################################
-    def on_message(self, ws, message):
-        print(message.replace('"', ""))
-
     def websocket_daemon(self):
         self.ws.run_forever()
 
     def connect_websocket(self, username, password):
         self.ws = websocket.WebSocketApp(websocket_url, 
                                          header={'username:' + username, 'password:' + password}, 
-                                         on_message=self.on_message)
+                                         on_message=on_message)
         t = threading.Thread(target=self.websocket_daemon)
         t.setDaemon(True)
         t.start()
@@ -208,6 +209,7 @@ class BBSClient(Cmd):
                 "date": date,
                 "comment": []
             }
+            print(presigned_url)
             r = requests.put(presigned_url,
                              json=post_data)
             if r.status_code == 200:
