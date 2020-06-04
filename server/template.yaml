@@ -34,6 +34,8 @@ Globals:
         CONNECTION_TABLE: !Join ["-", [!Ref Prefix, "connection-id"]]
         AUTHOR_SUB_TABLE: !Join ["-", [!Ref Prefix, "author-sub"]]
         BOARD_SUB_TABLE: !Join ["-", [!Ref Prefix, "board-sub"]]
+        USER_POOL_CLIENT_ID: !Ref UserPoolTokenClient
+        USER_POOL_ID: !Ref UserPool
 
 Resources:
   UserPool:
@@ -182,12 +184,26 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
 
+  WebsocketAuth:
+    Type: "AWS::ApiGatewayV2::Authorizer"
+    Properties:
+      Name: WebsocketAuth
+      ApiId: !Ref WebSocketApi
+      AuthorizerType: REQUEST
+      AuthorizerUri:
+        Fn::Sub:
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaRequestAuthFunction.Arn}/invocations
+      IdentitySource:
+        - "route.request.header.username"
+        - "route.request.header.password"
+
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WebSocketApi
       RouteKey: "$connect"
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref WebsocketAuth
       Target: !Join
         - '/'
         - - 'integrations'
@@ -262,6 +278,14 @@ Resources:
       DeploymentId: !Ref WebsocketDeployment
       ApiId: !Ref WebSocketApi
 
+  WebsocketLambdaAuthPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      FunctionName: !GetAtt LambdaRequestAuthFunction.Arn
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*'
+ 
   WebsocketLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties: 
@@ -298,6 +322,14 @@ Resources:
       - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
+
+  LambdaRequestAuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/auth/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
 
   ConnectionFunction:
     Type: AWS::Serverless::Function
