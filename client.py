@@ -209,7 +209,6 @@ class BBSClient(Cmd):
                 "date": date,
                 "comment": []
             }
-            print(presigned_url)
             r = requests.put(presigned_url,
                              json=post_data)
             if r.status_code == 200:
