@@ -45,4 +45,13 @@ This program is built from AWS SAM and can be deployed by AWS CLI.
 
 - Client : `./client.py <Server API Address>`
 
+## Todo
+
+- [ ] Add test script for subscribe function
+- [ ] Add unit test for each function
+- [ ] Move post storage to DynamoDB
+- [ ] Optimize DynamoDB design
+- [ ] Minimize client dependency (boto3)
+- [ ] Create user friendly website
+
 
