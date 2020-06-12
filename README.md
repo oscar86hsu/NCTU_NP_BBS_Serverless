@@ -32,6 +32,11 @@ This program is built from AWS SAM and can be deploy by AWS CLI.
 | list-mail | List all incoming mails of the current logged in user. |
 | retr-mail `<mail#>` | Retrieve the content of the mail `<mail#>` |
 | delete-mail `<mail#>` | Delete mail `<mail#>` from your mailbox. |
+| subscribe --board `<board-name>` --keyword `<keyword>` | Subscribe the board with a keyword, notify the client whenever the event be raised. |
+| subscribe --author `<author-name>` --keyword `<keyword>` | Subscribe the author with a keyword, notify the client whenever the event be raised. |
+| unsubscribe --board `<board-name>` | Unsubscribe the board from the server and remove all the keywords associated with a specified board. |
+| unsubscribe --author `<author-name>` | Unsubscribe the author from the server and remove all the keywords associated with a specified author. |
+| list-sub | List the information about the subscribed board(s) and author(s). |
 | exit | Close connection. |
 
 ## Usage
